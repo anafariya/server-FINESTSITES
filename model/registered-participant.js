@@ -9,17 +9,21 @@ const RegisteredParticipantSchema = new Schema({
   event_id: { type: Schema.Types.ObjectId, ref: 'EventManagement', required: true },
   first_name: { type: String },
   last_name: { type: String },
-  gender: { type: String, enum: ['male', 'female', 'diverse'], default: null },
+  gender: { type: String, enum: ['male', 'female'], default: null },
   date_of_birth: { type: Date },
   email: { type: String, required: true },
   status: {
     type: String,
-    enum: ['process', 'registered', 'canceled'],
+    enum: ['process', 'registered', 'canceled', 'cancelled'],
     default: 'registered'
   },
   is_main_user: { type: Boolean, default: null },
   is_cancelled: { type: Boolean, default: null },
   cancel_date: { type: Date },
+  cancellation_date: { type: Date },
+  cancellation_type: { type: String, enum: ['timely', 'late', 'admin', 'admin_group', 'admin_team'] },
+  voucher_code: { type: String },
+  voucher_amount: { type: Number },
   looking_for: { type: String },
   relationship_goal: { type: String, default: null },
   children: { type: Boolean, default: null },
@@ -28,7 +32,8 @@ const RegisteredParticipantSchema = new Schema({
   prefer_spending_time: { type: String, default: null },
   describe_you_better: { type: String, default: null },
   describe_role_in_relationship: { type: String, default: null },
-  is_test: { type: Boolean, default: null },
+  group_id: { type: Schema.Types.ObjectId, ref: 'Group', default: null },
+  team_id: { type: Schema.Types.ObjectId, ref: 'Team', default: null },
 }, { versionKey: false, timestamps: true });
 
 // Model
@@ -39,6 +44,7 @@ exports.schema = RegisteredParticipant;
  * registeredParticipant.create()
  */
 exports.create = async function (registration) {
+
   const data = new RegisteredParticipant({
     user_id: registration.user_id,
     event_id: registration.event_id,
@@ -56,8 +62,7 @@ exports.create = async function (registration) {
     feel_around_new_people: registration.feel_around_new_people,
     prefer_spending_time: registration.prefer_spending_time,
     describe_you_better: registration.describe_you_better,
-    describe_role_in_relationship: registration.describe_role_in_relationship,
-    is_test: registration.is_test
+    describe_role_in_relationship: registration.describe_role_in_relationship
   });
 
   await data.save();
@@ -370,4 +375,121 @@ exports.getLatestActiveEventByUser = async function (userId) {
   ]);
 
   return result[0] || null;
+};
+
+/*
+ * registeredParticipant.getById()
+ */
+exports.getById = async function ({ id }) {
+  return await RegisteredParticipant.findById(id);
+};
+
+/*
+ * registeredParticipant.update()
+ */
+exports.update = async function ({ id, data }) {
+  return await RegisteredParticipant.findByIdAndUpdate(id, data, { new: true });
+};
+
+/*
+ * registeredParticipant.getUserRegistrations()
+ */
+exports.getUserRegistrations = async function ({ user_id }) {
+  return await RegisteredParticipant.find({
+    user_id: user_id,
+    status: { $in: ['registered', 'process'] }
+  }).populate({
+    path: 'event_id',
+    populate: {
+      path: 'city',
+      model: 'City',
+      select: 'name'
+    }
+  }).lean();
+};
+
+/*
+ * registeredParticipant.getByEventId()
+ * Get all participants for a specific event
+ */
+exports.getByEventId = async function ({ event_id }) {
+  return await RegisteredParticipant.find({
+    event_id: event_id,
+    status: { $in: ['registered', 'process'] }
+  }).populate({
+    path: 'user_id',
+    select: 'first_name last_name email'
+  });
+};
+
+/*
+ * registeredParticipant.getByGroupId()
+ * Get all participants for a specific group
+ */
+exports.getByGroupId = async function ({ group_id }) {
+  return await RegisteredParticipant.find({
+    group_id: group_id,
+    status: { $in: ['registered', 'process'] }
+  }).populate({
+    path: 'user_id',
+    select: 'first_name last_name email'
+  });
+};
+
+/*
+ * registeredParticipant.getByTeamId()
+ * Get all participants for a specific team
+ */
+exports.getByTeamId = async function ({ team_id }) {
+  return await RegisteredParticipant.find({
+    team_id: team_id,
+    status: { $in: ['registered', 'process'] }
+  }).populate({
+    path: 'user_id',
+    select: 'first_name last_name email'
+    });
+};
+
+/*
+ * registeredParticipant.getCancelledByEventId()
+ * Get all cancelled participants for a specific event
+ */
+exports.getCancelledByEventId = async function ({ event_id }) {
+  return await RegisteredParticipant.find({
+    event_id: event_id,
+    status: 'cancelled'
+  }).populate({
+    path: 'user_id',
+    select: 'first_name last_name email'
+  });
+};
+
+/*
+ * registeredParticipant.getCancellationStats()
+ * Get cancellation statistics for an event
+ */
+exports.getCancellationStats = async function ({ event_id }) {
+  const stats = await RegisteredParticipant.aggregate([
+    { $match: { event_id: new mongoose.Types.ObjectId(event_id) } },
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+  
+  const result = {
+    total: 0,
+    registered: 0,
+    cancelled: 0,
+    process: 0
+  };
+  
+  stats.forEach(stat => {
+    result.total += stat.count;
+    result[stat._id] = stat.count;
+  });
+  
+  return result;
 };
