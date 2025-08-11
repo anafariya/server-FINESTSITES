@@ -1,0 +1,16 @@
+{
+    "invalid": "Please check your required inputs again",
+    "insufficient_hearts": "Not enough hearts to Superlike",
+    "insufficient_hearts_undo": "Not enough hearts to undo swipe",
+    "matched": "It's a match!",
+    "superlike_sent": "Superlike sent. Awaiting confirmation.",
+    "superlike_confirmed": "Superlike confirmed. It's a match!",
+    "superlike_rejected": "Superlike rejected.",
+    "not_found": "Not Found",
+    "no_recent_swipe": "No recent swipe found to undo",
+    "swipe_undone": "Swipe undone",
+    "unlock_chat": {
+        "insufficient_hearts": "Not enough hearts to Unlock the chat. Please top up your hearts first"
+    },
+    "blocked": "Already blocked this user."
+}

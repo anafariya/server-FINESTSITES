@@ -1,0 +1,17 @@
+{
+  "registered_event": {
+    "subject": "Anmeldestatus für Event – Meetlocal",
+    "body": "Hallo {{name}},\nWir freuen uns, Dir mitteilen zu können, dass Deine Anmeldung für {{event}} erfolgreich bestätigt wurde. Danke, dass Du Dich angemeldet hast – wir können es kaum erwarten, Dich beim Event zu sehen!\n\nHier sind die Details Deiner Anmeldung:\nEventname: {{event}}\nDatum & Uhrzeit: {{date}}\n\nWenn Du Deine Anmeldung einsehen oder verwalten möchtest, besuche bitte Dein Dashboard:",
+    "button": "Zu Meetlocal"
+  },
+  "join_meetlocal": {
+    "subject": "Deine nächsten Schritte, um Meetlocal beizutreten",
+    "body": "Hallo {{name}},\n\nDein Freund hat Dich eingeladen, Meetlocal beizutreten und an {{event}} teilzunehmen!\n\nDu bist nur noch einen Schritt davon entfernt, Dein Konto einzurichten, um auf Eventdetails zuzugreifen, Deine Anmeldung zu verwalten und weitere spannende Aktivitäten zu entdecken.\n\nHier sind die Eventdetails:\nEventname: {{event}}\nDatum & Uhrzeit: {{date}}\n\nUm loszulegen, klicke bitte auf den Button unten und vervollständige Dein Profil. Danach bist Du bereit, Dich mit anderen Teilnehmenden zu vernetzen und das Beste aus dem Event herauszuholen!\n\nWenn Du Fragen hast, antworte einfach auf diese E-Mail – wir sind für Dich da.",
+    "button": "Konto einrichten"
+  },
+  "buy_hearts": {
+    "subject": "Deine Meetlocal Hearts wurden gutgeschrieben!",
+    "body": "Dein Kauf von {{quantity}} Meetlocal Hearts für {{amount}} am {{date}} wurde erfolgreich Deinem Konto gutgeschrieben.\n\nDu kannst Deine Hearts jetzt nutzen, um Interesse zu zeigen, Superlikes zu senden und besondere Funktionen freizuschalten.\n\nVielen Dank für Deinen Kauf und dafür, dass Du Teil der Meetlocal-Community bist!\n\nUm Dein aktuelles Guthaben zu sehen oder Deine Hearts zu verwenden, besuche Dein Dashboard:",
+    "button": "Zu Meetlocal"
+  }
+}

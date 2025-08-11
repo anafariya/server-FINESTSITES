@@ -1,0 +1,18 @@
+{
+  "already_accepted": "{{email}} hat die Einladung bereits angenommen",
+  "duplicates_ignored": "- erkannt und ignoriert",
+  "invalid": "Bitte gib eine Einladungs-ID an",
+  "invalid_permission": "Der Berechtigungstyp kann nur 'owner' oder 'admin' sein",
+  "max_emails": "Maximal {{max}} E-Mails pro Einladung",
+  "get": {
+    "id_required": "Bitte gib eine Einladungs-ID an"
+  },
+  "delete": {
+    "success": "Einladung gelöscht",
+    "id_required": "Bitte gib eine Einladungs-ID an"
+  },
+  "sent": {
+    "one": "Einladung gesendet",
+    "other": "Einladungen gesendet"
+  }
+}

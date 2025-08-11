@@ -1,0 +1,18 @@
+{
+  "already_accepted": "{{email}} already accepted an invite",
+  "duplicates_ignored": "- detected and ignored",
+  "invalid": "Please provide an invite ID",
+  "invalid_permission": "Permission type can be only owner or admin",
+  "max_emails": "Max {{max}} emails per invite",
+  "get": {
+    "id_required": "Please provide an invite ID"
+  },
+  "delete": {
+    "success": "Invite deleted",
+    "id_required": "Please provide an invite ID"
+  },
+  "sent": {
+    "one": "Invite sent",
+    "other": "Invites sent"
+  }
+}

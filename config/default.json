@@ -1,0 +1,300 @@
+{
+ "domain": "http://localhost:3000",
+ "stripe": {
+  "seat_billing": false,
+  "plans": [
+      {
+        "id": "price_1Px3spGWVCygqvfcWb8cQX2N",
+        "name": "Starter Plan",
+        "type": "standard",
+        "price": 20,
+        "max_sites": 1,
+        "interval": "month",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "1 Webseite",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "id": "price_1Px3tHGWVCygqvfcg5rfwyp4",
+        "name": "Premium Plan",
+        "type": "standard",
+        "price": 29,
+        "max_sites": 3,
+        "interval": "month",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "3 Webseiten",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "id": "price_1Px3tbGWVCygqvfcwbzRZq0t",
+        "name": "Unlimited Plan",
+        "type": "standard",
+        "price": 36,
+        "max_sites": 1000000,
+        "interval": "month",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "∞ Webseiten",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "id": "price_1Px3tzGWVCygqvfcQ0VkhP68",
+        "name": "Starter Plan",
+        "type": "standard",
+        "price": 210,
+        "max_sites": 1,
+        "interval": "year",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "1 Webseite",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "id": "price_1Px3uIGWVCygqvfcZUsiOLDT",
+        "name": "Premium Plan",
+        "type": "standard",
+        "price": 290,
+        "max_sites": 3,
+        "interval": "year",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "3 Webseiten",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "id": "price_1Px3ujGWVCygqvfcvWcY26aM",
+        "name": "Unlimited Plan",
+        "type": "standard",
+        "price": 360,
+        "max_sites": 1000000,
+        "interval": "year",
+        "currency": {
+        "name": "eur",
+        "symbol": "€"
+        },
+        "features": [
+          {
+            "name": "Zugriff auf alle Vorlagen",
+            "checked": true
+          },
+          {
+            "name": "∞ Webseiten",
+            "checked": true
+          },
+          {
+            "name": "jederzeit kündbar",
+            "checked": true
+          }
+        ]
+      }
+    ]
+ },
+"email": {
+    "user_verification": true,
+    "domain": "mail.meetlocal.io",
+    "host": "api.eu.mailgun.net",
+    "sender": "Meetlocal <postmaster@mail.meetlocal.io>",
+    "base_url": "https://api.mailgun.net/v3"
+  },
+ "facebook": {
+  "scope": [
+   "email"
+  ],
+  "callback_url": "http://localhost:8080/auth/facebook/callback"
+ },
+ "twitter": {
+  "scope": [],
+  "callback_url": "http://localhost:8080/auth/twitter/callback"
+ },
+ "permissions": {
+  "master": {
+   "master": true,
+   "owner": true,
+   "admin": true,
+   "user": true,
+   "developer": true
+  },
+  "owner": {
+   "master": false,
+   "owner": true,
+   "admin": true,
+   "user": true,
+   "developer": true
+  },
+  "admin": {
+   "master": false,
+   "owner": false,
+   "admin": true,
+   "user": true,
+   "developer": false
+  },
+  "user": {
+   "master": false,
+   "owner": false,
+   "admin": false,
+   "user": true,
+   "developer": false
+  },
+  "developer": {
+   "master": false,
+   "owner": false,
+   "admin": false,
+   "user": true,
+   "developer": true
+  }
+ },
+ "api_scopes": [
+  "account.read",
+  "account.update",
+  "account.delete",
+  "billing.read",
+  "billing.update",
+  "invite.create",
+  "invite.read",
+  "invite.delete",
+  "key.create",
+  "key.read",
+  "key.update",
+  "key.delete",
+  "user.read",
+  "user.update",
+  "user.delete",
+  "event.create"
+ ],
+ "token": {
+  "duration": 604800
+ },
+ "security": {
+  "password_rules": "^(?=.*[!@#$%^&*(),.?\":{}|<>]).*$"
+ },
+ "throttle": {
+  "api": {
+   "max": 1000,
+   "windowMs": 3600000,
+   "headers": true,
+   "message": "Too many API calls from this IP, please try again soon."
+  },
+  "signup": {
+   "max": 5,
+   "windowMs": 3600000,
+   "headers": true,
+   "message": "You have created too many accounts."
+  },
+  "signin": {
+   "max": 5,
+   "windowMs": 300000,
+   "headers": true,
+   "message": "Too many sign in attempts, please try again in a few minutes."
+  },
+  "password_reset": {
+   "max": 3,
+   "windowMs": 300000,
+   "headers": true,
+   "message": "You have reached the limit of password reset requests."
+  }
+ },
+ "worker_schedule": {
+  "onboarding": {
+   "cron": "5 12 * * *",
+   "tz": "Europe/London"
+  },
+  "usage": {
+   "cron": "0 22 * * *",
+   "tz": "Europe/London"
+  }
+ },
+ "avatar": {
+  "size": 100,
+  "folder": "avatars"
+ },
+ "notifications": {
+  "new_signin": {
+   "active": true,
+   "permission": "user"
+  },
+  "plan_updated": {
+   "active": true,
+   "permission": "admin"
+  },
+  "card_updated": {
+   "active": true,
+   "permission": "admin"
+  },
+  "invite_accepted": {
+   "active": true,
+   "permission": "admin"
+  }
+ }
+}

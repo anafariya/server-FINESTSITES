@@ -1,0 +1,22 @@
+{
+  "file": {
+    "invalid_type": ".{{type}}-Dateien sind nicht erlaubt",
+    "string_not_found": "{{str}} ist nicht in {{path}} vorhanden"
+  },
+  "mail": {
+    "invalid_email": "Ungültige E-Mail-Adresse",
+    "invalid_template": "Ungültiger Vorlagenname",
+    "sent": "✉️  E-Mail wurde an {{email}} gesendet"
+  },
+  "notification": {
+    "error": "⛔️ Beim Senden der Benachrichtigung ist ein Fehler aufgetreten: {{message}}",
+    "error_code": "Fehlercode: {{code}}",
+    "sending": "Push-Benachrichtigung wird gesendet",
+    "sent": "🔔 Push-Benachrichtigung wurde gesendet",
+    "invalid_token": "⛔️ {{token}} ist kein gültiger Expo-Push-Token",
+    "no_tokens": "Bitte gib mindestens einen Push-Token an"
+  },
+  "utility": {
+    "field_required": "{{field}} ist erforderlich"
+  }
+}

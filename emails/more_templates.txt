@@ -1,0 +1,13 @@
+You can add more custom templates to this folder.
+
+Pass the template name to mail.send like this: 
+
+mail.send({
+
+  html_template: 'template_name.html'
+
+})
+
+If you need more sophisticated email templates 
+you can get 20% OFF https://htmlemail.io with
+code GRAVITY

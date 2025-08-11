@@ -1,0 +1,47 @@
+{
+  "list": {
+    "title": "{{capitalisedName}}s",
+    "header": {
+      "name": "Name"
+    },
+    "create": {
+      "title": "Create {{capitalisedName}}",
+      "description": "Create a new {{view}}",
+      "inputs": {
+        "name": {
+          "label": "Name"
+        }
+      },
+      "button": "Create"
+    },
+    "edit": {
+      "title": "Edit {{capitalisedName}}",
+      "description": "Edit {{view}}",
+      "inputs": {
+        "name": {
+          "label": "Name"
+        }
+      },
+      "button": "Update"
+    },
+    "delete": {
+      "title": {
+        "single": "Delete {{capitalisedName}}",
+        "plural": "Delete {{capitalisedName}}s"
+      },
+      "description": {
+        "single": "Are you sure you want to delete this {{view}}?",
+        "plural": "Are you sure you want to delete these {{view}}s?"
+      },
+      "button": "Delete"
+    },
+    "blank_slate": {
+      "title": "No {{capitalisedName}}s found",
+      "description": "Create a new {{view}}",
+      "button": "Create"
+    }
+  },
+  "detail": {
+    "title": "{{capitalisedName}}"
+  }
+}

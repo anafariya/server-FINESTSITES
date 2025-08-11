@@ -1,0 +1,47 @@
+{
+  "invalid": "Kein Benutzer mit dieser ID gefunden",
+  "invalid_id_user": "Bitte melde Dich an oder gib eine Benutzer-ID an",
+  "invalid_id_admin": "Bitte gib eine Benutzer-ID an",
+  "create": {
+    "denied": "Registrierung abgelehnt",
+    "duplicate": "Du bist bereits registriert",
+    "duplicate_child": "Du hast bereits ein Konto mit dieser E-Mail-Adresse. Bitte gib Dein ursprüngliches Passwort ein, um fortzufahren",
+    "invalid_invite": "Ungültige Einladung. Bitte kontaktiere den Kontoinhaber"
+  },
+  "update": {
+    "duplicate_email": "Diese E-Mail-Adresse ist bereits registriert",
+    "language": "Sprache aktualisiert",
+    "profile": "Profil aktualisiert",
+    "support_access": "Support-Zugriff aktualisiert",
+    "user": "Benutzer aktualisiert",
+    "unauthorized": "Du hast keine Berechtigung, diese Aktion auszuführen. Bitte kontaktiere den Kontoinhaber",
+    "permission_error": "Du kannst Deine eigenen Berechtigungen nicht ändern",
+    "invalid_default_account": "Du hast keinen Zugriff auf dieses Konto"
+  },
+  "password": {
+    "check_email": "Bitte überprüfe Deine E-Mails für weitere Anweisungen",
+    "invalid": "Bitte gib das richtige Passwort ein",
+    "invalid_email": "Bitte gib die richtige E-Mail-Adresse ein",
+    "saved": "Dein neues Passwort wurde gespeichert",
+    "same": "Dein neues Passwort muss sich vom alten unterscheiden",
+    "reset_denied": "Deine Passwort-Zurücksetzung wurde abgelehnt"
+  },
+  "verify": {
+    "check_email": "Bitte überprüfe Deine E-Mails für einen neuen Link",
+    "verified": "Dein Konto wurde verifiziert",
+    "invalid_code": "Ungültiger Verifizierungscode. Bitte versuch es erneut"
+  },
+  "delete": {
+    "owner": "Bitte lösche Kontoinhaber über die Kontoseite",
+    "owner_by_admin": "Kontoinhaber können nicht gelöscht werden",
+    "master": "Du kannst Dein Hauptkonto nicht löschen",
+    "accounts": "Benutzer von allen Konten entfernt",
+    "owner_account": "Bitte schließe Dein Konto über die Profilseite",
+    "user_account": "Du kannst Dich nicht selbst löschen, bitte kontaktiere den Kontoinhaber",
+    "deleted": "Benutzer gelöscht",
+    "invalid_password": "Bitte gib das richtige Passwort ein"
+  },
+  "log": {
+    "created": "✅ Benutzer erstellt: {{email}}"
+  }
+}

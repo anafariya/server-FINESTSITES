@@ -1,0 +1,19 @@
+{
+  "account_deactivated": "Dein Konto wurde deaktiviert. Bitte kontaktiere den Support.",
+  "account_disabled": "Dein Konto wurde wegen verdächtiger Aktivitäten deaktiviert. Bitte überprüfe Deine E-Mails für weitere Anweisungen.",
+  "account_doesnt_exist": "Du bist nicht registriert.",
+  "header_required": "Autorisierungs-Header erforderlich.",
+  "invalid_account": "Du bist kein Mitglied dieses Kontos.",
+  "invalid_api_key": "Ungültiger API-Schlüssel.",
+  "invalid_credentials": "Bitte gib die korrekten Anmeldedaten ein.",
+  "invalid_email": "Ungültige E-Mail-Adresse, bitte versuche es erneut.",
+  "invalid_header_type": "Nicht erkannter Header-Typ.",
+  "invalid_permission": "Du hast keine Berechtigung, diese Aktion durchzuführen.",
+  "invalid_scope": "Du hast keine Berechtigung, diesen Bereich zu nutzen.",
+  "invalid_token": "Ungültiger Token.",
+  "invalid_verification_code": "Ungültiger Bestätigungscode. Bitte versuche es erneut.",
+  "signin_blocked": "Dein Anmeldeversuch wurde wegen verdächtiger Aktivitäten blockiert. Bitte überprüfe Deine E-Mails für weitere Anweisungen.",
+  "token_expired": "Token ist abgelaufen, bitte melde Dich erneut an.",
+  "token_required": "Autorisierungs-Token erforderlich.",
+  "unverified_account": "Bitte verifiziere Dein Konto, um auf diese Ressource zuzugreifen."
+}

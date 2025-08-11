@@ -1,0 +1,15 @@
+{
+  "create": {
+    "success": "API-Schlüssel erstellt"
+  },
+  "get": {
+    "id_required": "Bitte gib eine API-Schlüssel-ID an"
+  },
+  "update": {
+    "id_required": "Bitte gib eine API-Schlüssel-ID an",
+    "success": "API-Schlüssel aktualisiert"
+  },
+  "delete": {
+    "success": "API-Schlüssel gelöscht"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "invalid": "Kein Konto mit dieser ID gefunden",
+  "plan_required": "Bitte melde Dich für einen Plan an, um diese Funktion zu nutzen",
+  "card": {
+    "missing": "Bitte gib Deine Kreditkartendaten ein",
+    "updated": "Deine Kartendaten wurden aktualisiert"
+  },
+  "create": {
+    "denied": "Registrierung abgelehnt",
+    "duplicate": "Du hast bereits ein Konto registriert",
+    "duplicate_child": "Mit dieser E-Mail-Adresse ist bereits ein Konto registriert. Bitte gib Dein ursprüngliches Passwort ein, um fortzufahren",
+    "password_same_as_email": "Das Passwort darf nicht mit der E-Mail-Adresse identisch sein"
+  },
+  "delete": {
+    "invalid_password": "Bitte gib das richtige Passwort ein",
+    "success": "Dein Konto wurde gelöscht"
+  },
+  "plan": {
+    "invalid": "Plan existiert nicht. Bitte wähle einen anderen Plan und versuche es erneut",
+    "active": "Du bist bereits im {{plan}}-Plan",
+    "payment_required": "Bitte upgrade Dein Konto",
+    "updated": "Dein Konto wurde auf den {{plan}}-Plan aktualisiert",
+    "subscription_canceled": "Dein Abonnement wurde gekündigt, bitte upgrade Dein Konto",
+    "master_upgrade": "Der Kontoinhaber muss seine Kartendaten eingeben und auf einen kostenpflichtigen Plan upgraden",
+    "requires_action": "⚠️  Stripe-Zahlung erfordert weitere Aktion",
+    "plan_exists": "Du hast bereits einen aktiven Plan. Bitte kündige Deinen aktuellen Plan, bevor Du einen neuen abonnierst."
+  },
+  "log": {
+    "creating": "⏱️  Konto wird erstellt für: {{email}}",
+    "created": "✅ Konto erstellt für: {{email}}",
+    "deleted": "🗑️  Konto gelöscht: {{email}}",
+    "plan": "✅ Kunde wurde dem Plan hinzugefügt"
+  },
+  "sepa": {
+    "updated": "Deine Zahlung war erfolgreich"
+  }
+}

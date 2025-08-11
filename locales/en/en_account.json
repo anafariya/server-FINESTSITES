@@ -1,0 +1,37 @@
+{
+	"invalid": "No account with that ID",
+	"plan_required": "Please sign up for a plan to use this feature",
+	"card": {
+		"missing": "Please enter your credit card details",
+		"updated": "Your card details have been updated"
+	},
+	"create": {
+		"denied": "Registration denied",
+		"duplicate": "You have already registered an account",
+		"duplicate_child": "You already have an account registered with this email address. Please enter your original password to continue",
+		"password_same_as_email": "Password cannot be the same as email"
+	},
+	"delete": {
+		"invalid_password": "Please enter the correct password",
+		"success": "Your account has been deleted"
+	},
+	"plan": {
+		"invalid": "Plan doesn't exist. Please select another plan and try again",
+		"active": "You're already on the {{plan}} plan",
+		"payment_required": "Please upgrade your account",
+		"updated": "Your account has been updated to the {{plan}} plan",
+		"subscription_canceled": "Your subscription was cancelled, please upgrade your account",
+		"master_upgrade": "The account holder will need to enter their card details and upgrade to a paid plan",
+		"requires_action": "⚠️  Stripe payment requires further action",
+		"plan_exists": "You're already on a plan. Please cancel your plan before subscribing to a new one."
+	},
+	"log": {
+		"creating": "⏱️  Creating account for: {{email}}",
+		"created": "✅ Account created for: {{email}}",
+		"deleted": "🗑️  Account deleted: {{email}}",
+		"plan": "✅ Customer added to plan"
+	},
+	"sepa": {
+		"updated": "Your payment is succeed"
+	}
+}

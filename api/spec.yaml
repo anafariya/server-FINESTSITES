@@ -1,0 +1,2118 @@
+openapi: 3.0.0
+info:
+  title: Gravity API
+  description: Node.js SaaS Boilerplate API
+  version: 1.0.0
+
+servers:
+  - url: localhost:8080/api
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas: 
+    Auth: 
+      type: object
+      properties:
+        token: 
+          type: string
+          description: JWT token used to access private API endpoints.
+        plan:
+          type: string
+          nullable: true
+          description: Stripe subscripion price ID.
+        permission:
+          type: string
+          description: Permission (role) for the user.
+        name:
+          type: string
+          description: The user's name.
+        accounts:
+          type: array
+          description: A list of account IDs, name and corresponding permission associated with this user.
+          items: 
+            type: object
+            properties:
+              id: 
+                type: string
+                description: The account ID.
+              name: 
+                type: string
+                description: The account name.
+              permission:
+                type: string
+                description: User's permission (role) for this account.
+              account_id:
+                type: string  
+            description: Account ID.
+        has_password: 
+          type: boolean
+          description: Determines if the user is using a password or signed in with a social network.
+        onboarded: 
+          type: integer
+          description: Determines if the user has completed the onboarding flow.
+    User:
+      type: object
+      properties:
+        data:
+          type: object
+        id:
+          type: string
+          description: The user ID.
+        name: 
+          type: string
+          description: The user's name.
+        email:
+          type: string
+          description: The user's email address.
+        date_created:
+          type: string
+          description: Timestamp of when the user was created.
+        support_enabled:
+          type: integer
+          description: Determines if the user has enabled support to impersonate their account.
+        last_active:
+          type: string
+          description: Timestamp of when the user last loaded the app.
+        onboarded:
+          type: integer
+          description: Determines if the user has completed the onboarding process.
+        facebook_id:
+          type: string 
+          nullable: true
+          description: Social network account ID if signed up with Facebook.
+        twitter_id:
+          type: string
+          nullable: true
+          description: Social network account ID if signed up with Twitter.
+        disabled:
+          type: integer
+          description: Determines if the account has been disabled or not.
+        account_id: 
+          type: string
+          description: Account ID of the parent account the user is currently authenticated to.
+        permission:
+          type: string
+          description: The user's permission level within the current account.
+        default_account:
+          type: string
+          description: The default account the user is assigned to when signing in.
+        2fa_enabled:
+          type: integer
+          description: Determines if the user is using two-factor authentication.
+        has_password:
+          type: boolean
+          description: Determines if the user is usign a password or social sign in.
+        account_name:
+          type: string
+          description: Name of the parent account.
+        accounts: 
+          type: array
+          description: List of accounts this user belongs to.
+          items:
+            type: object
+            properties:
+              id: 
+                type: string
+                description: Account ID.
+              name: 
+                type: string
+                description: Account name.
+              permission:
+                type: string
+                description: User's permission level within the account.
+    Job: 
+      type: object
+      properties:
+        data:
+          type: object
+          properties: 
+            id:
+              type: string
+              description: The job ID
+            name: 
+              type: string
+              description: The job name name.
+            data: 
+              type: object
+              description: The custom data sent in the post request.
+            opts: 
+              type: object
+              description: The options provided to the job.
+            progress:
+              type: string
+              description: The current status/progress of the job.
+            delay:
+              type: string
+              description:  Amount of milliseconds to wait until this job can be processed.
+            timestamp:
+              type: integer
+              description: Timestamp when the job was created.
+            attemptsMade: 
+              type: integer
+              description: Total number of attempts to try the job until it completes.
+            finishedOn:
+              type: integer
+              description: Timestamp when the job was finished.
+            processedOn:
+              type: integer
+              description: Timestamp when the job was processed.
+            
+paths:
+  /account:
+    post:
+      summary: /account
+      description: Registers a new account (organisation) and user with an owner permission.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The user's email address
+                password: 
+                  type: string
+                  description: The user's password
+                name:
+                  type: string
+                  description: The user's name
+      responses:
+          200:
+            description: OK
+            content: 
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/Auth'
+              
+          500:
+            description: There was a server error. See response message for details.
+    get:
+      summary: /account
+      description: Returns the currently authenticated account. The selection is based on the accountId inside the JWT token.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses: 
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: The account ID.
+                      name:
+                        type: string
+                        description: The account name.
+                      date_created: 
+                        type: string
+                        description: Timestamp of when the account was created.
+                      stripe_customer_id:
+                        type: string
+                        nullable: true
+                        description: ID of the customer object in Stripe.
+                      stripe_subscription_id:
+                        type: string
+                        nullable: true
+                        description: ID of the subscription object in Stripe.
+                      plan:
+                        type: string
+                        nullable: true
+                        description: ID of the subscription price ID in Stripe.
+                      active: 
+                        type: integer
+                        description: Determines if the account has been deactivated or not.
+                      owner_email:
+                        type: string
+                        description: Email address of the account owner.
+                      owner_name:
+                        type: string
+                        description: Name of the account owner.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete: 
+      summary: /delete
+      description: Delete an account and all of its child users.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/{id}:
+    delete:
+      summary: /account/{id}
+      description: Delete an account by ID. Only available to the 'master' permission in the Mission Control app
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the account to delete.
+      responses:
+        200: 
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/plan:
+    post: 
+      summary: /account/plan
+      description: Set the account plan for the first time. Performed as the second step in the signup process.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties: 
+                plan:
+                  type: string
+                  description: Stripe plan ID or 'free'.
+                token:
+                  type: object
+                  description: Stripe token generated by stripe.js on the client app.
+                  properties: 
+                    id: 
+                      type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plan:
+                    type: string
+                    description: Stripe plan ID or 'free'.
+                  subscription:
+                    type: string
+                    description: Stripe subscription status or 'active' for 'free' plan.
+                  onboarded:
+                    type: boolean
+                    description: Determines if the user has completed onboarding or not.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    patch:
+      summary: /account/plan
+      description: Update the account plan.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plan:
+                  type: string
+                  description: Stripe plan ID or 'free'.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      plan:
+                        type: string
+                        description: Stripe plan ID or 'free'.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/card:
+    get:
+      summary: /account/card
+      description: Returns the information for the credit/debit card attached to the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      brand:
+                        type: string
+                        description: Brand name of the card
+                      last4:
+                        type: string
+                        description: Last 4 digits of the card number
+                      exp_month:
+                        type: integer
+                        description: Expiry month of the card
+                      exp_year:
+                        type: integer
+                        description: Expiry month of the year
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    patch:
+      summary: /account/card
+      description: Update the credit card attached to the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: 
+                  type: string
+                  description: Valid Stripe token generated by stripe.js in the client app.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      object:
+                        type: string
+                      address_city:
+                        type: string
+                        nullable: true
+                      address_country:
+                        type: string
+                        nullable: true
+                      address_line1:
+                        type: string
+                        nullable: true
+                      address_line1_check:
+                        type: string
+                        nullable: true
+                      address_line2:
+                        type: string
+                        nullable: true
+                      address_state:
+                        type: string
+                        nullable: true
+                      address_zip:
+                        type: string
+                        nullable: true
+                      address_zip_check:
+                        type: string
+                        nullable: true
+                      brand:
+                        type: string
+                      country:
+                        type: string
+                      customer:
+                        type: string
+                        description: Stripe customer object ID.
+                      cvc_check:
+                        type: string
+                        nullable: true
+                      dynamic_last4:
+                        type: string
+                        nullable: true
+                      exp_month:
+                        type: integer
+                      exp_year:
+                        type: integer
+                      fingerprint:
+                        type: string
+                      funding:
+                        type: string
+                      last4:
+                        type: string
+                      metadata:
+                        type: object
+                      name:
+                        type: string
+                        nullable: true
+                      tokenization_method: 
+                        type: string
+                        nullable: true
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/invoice:
+    get:
+      summary: /account/invoice
+      description: Returns a list of past invoices for the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: List of invoice objects
+                properties: 
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        number: 
+                          type: string
+                          description: Invoice number generated by Stripe
+                        date:
+                          type: string
+                          description: Date the invoice was generated
+                        status:
+                          type: string
+                          description: Status of the invoice, eg. paid
+                        invoice_pdf:
+                          type: string
+                          description: URL of the downloadable invoice
+                        total:
+                          type: string
+                          description: Total price for the invoice
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/plans:
+    get:
+      summary: /account/plans
+      description: Returns a list of available plans. 
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      plans: 
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id: 
+                              type: string
+                              description: Stripe price ID or 'free'.
+                            name:
+                              type: string
+                              description: User-friendly name of the price.
+                            price:
+                              type: number
+                              description: Price of the plan.
+                            interval:
+                              type: string
+                              description: Billing interval, eg. month.
+                            currency:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  description: String identifier for the currency, eg. usd.
+                                symbol:
+                                  type: string
+                                  description: Symbol identifier for the currency eg. $.
+                            features:
+                              type: array
+                              description: Checklist of features on the plan.
+                              items:
+                                type: object
+                                properties:
+                                  name: 
+                                    type: string
+                                    description: Name of the feature.
+                                  checked:
+                                    type: boolean
+                                    description: Determines if the feature is included or not.
+                      active: 
+                        type: string
+                        nullable: true
+                        description: Determines if there is an active plan when fetching via authenticated account.
+
+  /account/users:
+    get:
+      summary: /account/users
+      description: Returns a list of users on the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        description: Array of registered users.
+                        items:
+                          type: object
+                          properties:
+                            users:
+                              type: array
+                              description: Array of user objects on the account.
+                              items:
+                                $ref: '#/components/schemas/User'
+                      invites:
+                        type: array
+                        description: Array of invited users.
+                        items: 
+                          type: object
+                          properties: 
+                            id:
+                              type: string
+                              description: The invite ID.
+                            email: 
+                              type: string
+                              description: The invited user's email address.
+                            permission:
+                              type: string
+                              description: The invited user's permission level.
+                            date_sent:
+                              type: string
+                              description: The date the invite was sent.
+                            account_id:
+                              type: string
+                              description: Account ID the invite belongs to.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/subscription: 
+    get:
+      summary: /account/subscription
+      description: Returns the Stripe subscription status.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        description: Subscription state from Stripe eg. 'active'.
+                      object:
+                        type: object
+                        description: Contains additional information about the subscription object.
+                        properties:
+                          current_period_start:
+                            type: string
+                            description: The date the current billing cycle starts.
+                          current_period_end:
+                            type: string
+                            description: The date the current billing cycle ends.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /account/usage: 
+      get:
+        summary: /account/usage
+        description: Return the current usage.
+        security:
+          - BearerAuth: []
+          - BasicAuth: []
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        total:
+                          type: integer
+                          description: total usage for this period (units on free plan, price on paid)
+                        label:
+                          type: string
+                          description: units (free) or blank (paid)
+                        period:
+                          type: string
+                          description: period label (default is month)     
+          500: 
+            description: There was a server error. See response message for details.
+          401: 
+            description: User is not authorised to access the private endpoint.
+
+  /account/upgrade:
+    post:
+      summary: /account/upgrade
+      description: Upgrade a free account to paid.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                plan:
+                  type: string
+                  description: Stripe price ID.
+                token:
+                  type: object
+                  description: Stripe token object generated by stripe.js in the client application.
+                  properties:
+                    id: 
+                      type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      plan:
+                        type: string
+                        description: Stripe price ID
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /auth:
+    post:
+      summary: /auth
+      description:  Authenticates a user based on email and password.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    description: The user's email address.
+                  password:
+                    type: string
+                    description: The user's password.
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Auth'        
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    get: 
+      summary: /auth
+      description: Get the current auth status. Used to check the users authentication status each time the app loads.
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Auth'    
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete: 
+      summary: /auth
+      description: Sign a user out and delete their token.
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /auth/otp:
+    post:  
+      summary: /auth/otp
+      description: One time password input for step 2 of the sign in process when using 2FA.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  description: One-time code generated by authenticator app.
+                jwt:
+                  type: string
+                  description: Time-sensitive JWT token issued when signing in.
+      responses:
+          200:
+            description: OK
+            content: 
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/Auth'
+          500: 
+            description: There was a server error. See response message for details.
+
+  /auth/magic:
+    post:
+      summary: /auth/magic
+      description: Generate a magic sign-in link and email it to the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                email:
+                  type: string
+                  description: Email address for the user.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+
+  /auth/magic/verify:
+    post:
+      summary: /auth/magic/verify
+      description: Verify a magic sign-in token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: 
+                  type: string
+                  description: JWT passed through from the client via the link in the email.
+      responses:
+          200:
+            description: OK
+            content: 
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/Auth'    
+          500: 
+            description: There was a server error. See response message for details.
+
+  /auth/password/reset/request:
+    post:
+      summary: /auth/password/reset/request
+      description: Request a new password reset email.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                email: 
+                  type: string
+                  description: Email address of the user.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+
+  /auth/password/reset:
+    post: 
+      summary: /auth/password/reset
+      description: Complete the password reset process.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:  
+                  type: string
+                  description: Email address of the user.
+                jwt:
+                  type: string
+                  description: JWT token passed through from the server via the client app.
+                password:
+                  type: string
+                  description: The new password
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Auth'    
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: Password reset request was denied.
+
+  /auth/switch:
+    post: 
+      summary: /auth/switch
+      description: Switch the account for the currently authenticated user.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                account: 
+                  type: string
+                  description: Account ID of the account to switch to.
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Auth'     
+        500:
+          description: User doesn't belong to the specified account.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /auth/impersonate:
+    post: 
+      summary: /auth/impersonate
+      description: Impersonate a user for providing support. Only available to the master permission via the Misson Control app.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: 
+                  type: string
+                  description: JWT token for the master account.
+                user_id:
+                  type: string
+                  description: ID of the user to impersonate.
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Auth'                
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /event:
+    post:
+      summary: /event
+      description: Log a new client-side event that can be viewed in the Mission Control app.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the event to track.
+                metadata: 
+                  type: object
+                  description: Custom metadata object to save.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of the event.
+                      id: 
+                        type: string
+                        description: ID of the new event.
+                      user_id:
+                        type: string
+                        description: ID of the user associated with the event.
+                      account_id:
+                        type: string
+                        description: ID of the account the user belongs to.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /feedback:
+    post: 
+      summary: /feedback
+      description: Log a new feedback item from a user.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: string
+                  description: One of positive, neutral or negative.
+                comment:
+                  type: string
+                  description: User comment.
+      responses:
+        200: 
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  data:
+                    type: object
+                    properties:
+                      rating: 
+                        type: string
+                      comment:
+                        type: string
+                      id: 
+                        type: string
+                        description: ID of the new comment.
+                      user_id: 
+                        type: string
+                        description: ID of the user who posted the feedback.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /invite:
+    post:
+      summary: /invite
+      description: Invite a new user to the account. Available to admin and owner permissions.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email address or list of emails separated by a comma of the user(s) to invite.
+                permission:
+                  type: string
+                  description: Permission level of the user.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  data:
+                    type: array
+                    description: Array of invite objects.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: ID of the newly created invite.
+                        email:
+                          type: string
+                          description: Email address of the invited user.
+                        used:   
+                          type: boolean
+                          description: Determines if the invite has been redeemed or not.
+                        permission:
+                          type: string
+                          description: Permission level of the user.
+                        date_sent:
+                          type: string
+                          description: Timestamp when the invite was sent.
+                        account_id:
+                          type: string
+                          description: ID of the account the invite belongs to.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    get:
+      summary: /invite
+      description: Get a list of invites on the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200: 
+          description: OK
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: Array of invites
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: ID of the newly created invite
+                        email:
+                          type: string
+                          description: Email address of the invited user
+                        permission:
+                          type: string
+                          description: Permission level of the user
+                        date_sent:
+                          type: string
+                          description: Timestamp the invite was sent
+                        account_id:
+                          type: string
+                          description: ID of the account the invite belongs to
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /invite/{id}:
+    get:
+      summary: /invite/{id}
+      description: Get a list of invites on the account.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invite to get.
+      responses:
+        200: 
+          description: OK
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: Array containing a single invite object.
+                    items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            description: ID of the newly created invite.
+                          email:
+                            type: string
+                            description: Email address of the invited user.
+                          permission:
+                            type: string
+                            description: Permission level of the user.
+                          date_sent:
+                            type: string
+                            description: Timestamp the invite was sent.
+                          account_id:
+                            type: string
+                            description: ID of the account the invite belongs to.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete:
+      summary: /invite/{id}
+      description: Delete an invite
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the invite to delete
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    properties:
+                      id: 
+                        type: string
+                        description: ID of the invite that was deleted
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /key:
+    post:
+      summary: /key
+      description: Create a new API key.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                name:
+                  type: string
+                  description: Name for the API key.
+                scope:
+                  type: array
+                  description: List of scopes.
+                  items: 
+                    type: string
+                    description: Scope name.
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    type: object
+                    description: The new API key.
+                    properties:
+                      name:
+                        type: string
+                        description: API key name.
+                      scope: 
+                        type: array
+                        description: List of scopes.
+                        items:
+                          type: string
+                          description: Scope name.
+                      key: 
+                        type: string
+                        description: Masked key
+                      id: 
+                        type: string
+                        description: ID of the API key.
+                      account_id: 
+                        type: string
+                        description: Account ID the API key belongs to.
+                      full_key:
+                        type: string
+                        description: The full unmasked key.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    get:
+      summary: /key
+      description: Returns a list of API keys on the account. Contains only the masked keys. To get the full key use /key/{id}.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: List of API keys on the account.
+                    items:
+                      type: object
+                      properties:
+                        id: 
+                          type: string
+                          description: ID of the API key.
+                        name: 
+                          type: string
+                          description: Name of the API key.
+                        key:
+                          type: string
+                          description: Masked key.
+                        scope:
+                          type: array
+                          description: List of scopes.
+                          items: 
+                            type: string
+                            description: Scope name.
+                        active:
+                          type: boolean
+                      description: Determines if the key has been deactivated or not.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete: 
+      summary: /key
+      description: Delete API key(s).
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                id: 
+                  type: array
+                  description: Array of IDs to delete.
+
+  /key/{id}:
+    get:
+      summary: /key/{id}
+      description: Return a single API key.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the key to get.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  data: 
+                    type: array
+                    description: Array containing a single API key object.
+                    items:
+                      type: object
+                      properties:
+                        id: 
+                          type: string
+                          description: ID of the API key.
+                        name: 
+                          type: string
+                          description: Name of the API key.
+                        key:
+                          type: string
+                          description: Masked key.
+                        scope:
+                          type: array
+                          description: List of scopes.
+                          items: 
+                            type: string
+                            description: Scope name.
+                        active:
+                          type: boolean
+                          description: Determines if the key has been deactivated or not.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    patch:
+      summary: /key/{id}
+      description: Update the name or scope of an API key.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: ID of the key to update.
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                name: 
+                  type: string
+                  description: Update name for the key.
+                scope:
+                  type: array
+                  description: Updated scope list.
+                  items:
+                    type: string
+                    description: Scope name.
+      responses:
+        200: 
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /key/scopes:
+    get:
+      summary: /key/scopes
+      description: Returns a list of available API key scopes.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:   
+                type: object 
+                properties: 
+                  data:
+                    type: array
+                    description: Array of scopes.
+                    items:
+                      type: string
+                      description: Scope name.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /pushtoken:
+    put:
+      summary: /pushtoken
+      description: Create or update a pushtoken for the native app.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                push_token:
+                  type: string
+                  description: Push token issued by native application.
+      responses:
+        200: 
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /user:
+    post: 
+      summary: /user
+      description: Register a new user on an account. Requires an existing invite to be generated.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                invite_id: 
+                  type: string
+                  description: ID of the invite.
+                name:
+                  type: string
+                  description: The user's name.
+                email:
+                  type: string
+                  description: The user's email address.
+                password: 
+                  type: string
+                  description: The user's password.
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Auth'              
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    get:
+      summary: /user
+      description: Get the currently authenticated user object.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    $ref: '#/components/schemas/User'    
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    patch:
+      summary: /user
+      description: Update a user. Certain fields like 'permission' are restricted to being updated only by an admin.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The user's name.
+                email: 
+                  type: string
+                  description: The user's email address.
+                last_active:
+                  type: string
+                  description: Timestamp of when the user last loaded the application.
+                support_enabled:
+                  type: boolean
+                  description: Determines if support can impersonate the user's account.
+                default_account:
+                  type: string
+                  description: The default account the user is assigned to when signing in.
+                permission:
+                  type: string
+                  description: The user's permission within the current account.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  data:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The user's name.
+                        email: 
+                          type: string
+                          description: The user's email address.
+                        last_active:
+                          type: string
+                          description: Timestamp of when the user last loaded the application.
+                        support_enabled:
+                          type: boolean
+                          description: Determines if support can impersonate the user's account.
+                        default_account:
+                          type: string
+                          description: The default account the user is assigned to when signing in.
+                        permission:
+                          type: string
+                          description: The user's permission within the current account.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete:
+      summary: /user
+      description: Delete the currently authenticated user.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /user/{id}:
+    get: 
+      summary: /user/{id}
+      description: Get a user by ID.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          description: ID of user to get.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    $ref: '#/components/schemas/User'    
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete:
+      summary: /user/{id}
+      description: Delete a user as admin or via the Mission Control app.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          description: ID of user to delete.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /user/account:
+    get:
+      summary: /user/account
+      description: Returns a list of accounts the current user belongs to.
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  data:
+                    type: array
+                    description: List of account objects.
+                    items:
+                      type: object
+                      properties:
+                        id: 
+                          type: string
+                          description: Account ID.
+                        name:
+                          type: string
+                          description: Account name.
+                        permission: 
+                          type: string
+                          description: User's permission level for this account.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+           
+  /user/permissions:
+    get:
+      summary: /user/permissions
+      description: Returns the available permission stack.
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: Permission stack.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+            
+  /user/password:
+    put:
+      summary: /user/password
+      description: Update the user's password.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldpassword:
+                  type: string
+                  description: The user's current password.
+                newpassword:
+                  type: string
+                  description: The user's new password.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+  
+  /user/verify:
+    post:
+      summary: /user/verify
+      description: Verify the users email address.
+      security:
+        - BearerAuth: []
+      requestBody:  
+        required: true
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                token: 
+                  type: string
+                  description: JWT for verification.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: Verification token is invalid.
+
+  /user/verify/request:
+    post:
+      summary: /user/verify/request
+      description: Verify the users email address.
+      security:
+        - BearerAuth: []
+      requestBody:  
+        required: false
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                verify_view_link: 
+                  type: string
+                  description: React Native view URL
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: Verification token is invalid.
+
+  /user/2fa:
+    put:
+      summary: /user/2fa
+      description: Enable 2FA on the user's account.
+      security:
+        - BearerAuth: []
+      requestBody:  
+        required: true
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                2fa_enabled: 
+                  type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  2fa_enabled:
+                    type: boolean
+                    description: Returns the state of 2fa.
+                  qr_code:
+                    type: string
+                    description: QR code as a base64 png image.
+                  otpauth:
+                    type: string
+                    description: Link to open authenticator app in React Native application.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /user/2fa/verify:
+    post:
+      summary: /user/2fa/verify
+      description: The second step in enabling 2FA is to enter a code from the authenticator app.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: 
+                  type: string
+                  description: The 6 digit code generated by the authenticator app.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                      type: object
+                      properties:
+                        backup_code:
+                          type: string
+                          description: The 2FA backup code to be stored by the user.
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /utility/upload:
+    post: 
+      summary: /utility/upload
+      description: Upload a file to the server.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /utility/mail:
+    post: 
+      summary: /utility/mail
+      description: Send an email to the support address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                template:
+                  type: string
+                  description: Email template to use.
+                name:
+                  type: string
+                  description: Name of the recipient.
+                email:
+                  type: string
+                  description: Email address of the recipient.
+                message:
+                  type: string
+                  description: Message to send.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+
+  /ai/text:
+    post: 
+      summary: /api/ai/text
+      description: Generate a text response with ChatGPT
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  description: Input prompt for ChatGPT
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+  
+  /ai/image:
+    post: 
+      summary: /api/ai/image
+      description: Generate a image response with Dall-E
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  description: Input prompt for Dall-E
+                size:
+                  type: string
+                  description: Dimensions for the output image eg. 512x512
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+  
+  /job:
+    post: 
+      summary: /api/job
+      description: Create a new job and add it to the queue
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: 
+              type: object
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    
+  /job/{id}:
+    get: 
+      summary: /job/{id}
+      description: Get a job by ID.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          description: ID of job to get.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: 
+                    $ref: '#/components/schemas/Job'    
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    patch:
+      summary: /job/{id}
+      description: Update a jobs data.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          description: ID of job to delete.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: 
+              type: object
+              description: Data to update the job with.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+    delete:
+      summary: /job/{id}
+      description: Delete a job that is not currently being processed.
+      security:
+        - BearerAuth: []
+        - BasicAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          description: ID of job to delete.
+      responses:
+        200:
+          description: OK
+        500: 
+          description: There was a server error. See response message for details.
+        401: 
+          description: User is not authorised to access the private endpoint.
+
+  /webhook/stripe:
+    post: 
+        summary: /api/webhook/stripe
+        description: Handle incoming Stripe webhooks
+        requestBody:
+          required: false
+          content:
+            application/json:
+              schema: 
+                type: object
+        responses:
+          200:
+            description: OK
+          500: 
+            description: There was a server error. See response message for details.

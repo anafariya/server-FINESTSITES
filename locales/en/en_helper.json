@@ -1,0 +1,22 @@
+{
+  "file": {
+    "invalid_type": ".{{type}} files are not allowed",
+    "string_not_found": "{{str}} is not present in {{path}}"
+  },
+  "mail": {
+    "invalid_email": "Invalid email",
+    "invalid_template": "Invalid template name",
+    "sent": "✉️  Email sent to {{email}}"
+  },
+  "notification": {
+    "error": "⛔️ There was an error sending a notification: {{message}}",
+    "error_code": "Error code: {{code}}",
+    "sending": "Sending push notification",
+    "sent": "🔔 Push notification sent",
+    "invalid_token": "⛔️ {{token}} is not a valid Expo push token",
+    "no_tokens": "Please provide at least one push token"
+  },
+  "utility": {
+    "field_required": "{{field}} is required"
+  }
+}

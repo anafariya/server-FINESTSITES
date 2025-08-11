@@ -1,0 +1,14 @@
+{
+  "create": {
+    "success": "Event erstellt"
+  },
+  "get": {
+    "id_required": "Event-ID ist erforderlich"
+  },
+  "delete": {
+    "success": "Event gelöscht",
+    "id_required": "Event-ID ist erforderlich"
+  },
+  "already_paid": "Bereits bezahlt",
+  "already_held": "Dieses Event hat bereits stattgefunden und kann nicht mehr aufgerufen werden."
+}

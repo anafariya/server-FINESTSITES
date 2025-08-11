@@ -1,0 +1,13 @@
+{
+  "create": {
+    "success": "{{capitalisedName}} created"
+  },
+  "update": {
+    "id_required": "Please provide a {{capitalisedName}} ID",
+    "success": "{{capitalisedName}} created"
+  },
+  "delete": {
+    "id_required": "Please provide a {{capitalisedName}} ID",
+    "success": "{{capitalisedName}} deleted"
+  }
+}

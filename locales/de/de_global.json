@@ -1,0 +1,16 @@
+{
+	"welcome": "Willkommen bei Gravity 🚀",
+	"months": "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
+	"error": "Ein interner Fehler ist aufgetreten. Bitte versuch es erneut oder kontaktiere den Support.",
+	"validation": {
+		"default": "{{field}} ist ungültig",
+		"required": "{{field}} ist erforderlich",
+		"invalid": "{{field}} ist ungültig",
+		"min_length": "{{field}} muss mindestens {{min}} Zeichen lang sein",
+		"max_length": "{{field}} darf höchstens {{max}} Zeichen lang sein",
+		"email": "{{field}} muss eine gültige E-Mail-Adresse sein",
+		"number.min": "{{field}} muss mindestens {{min}} sein",
+		"number.max": "{{field}} darf höchstens {{max}} sein",
+		"password": "{{field}} muss mindestens ein Sonderzeichen enthalten (z. B. !@#$%^&*)."
+	}
+}

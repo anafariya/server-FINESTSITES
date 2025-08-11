@@ -1,0 +1,4 @@
+{
+  "invalid_id": "Please provide a job ID",
+  "removed": "Job {{id}} removed from queue"
+}

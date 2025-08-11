@@ -1,0 +1,15 @@
+{
+  "create": {
+    "success": "API key created"
+  },
+  "get": {
+    "id_required": "Please provide an API key ID"
+  },
+  "update": {
+    "id_required": "Please provide an API key ID",
+    "success": "API key updated"
+  },
+  "delete": {
+    "success": "API key deleted"
+  }
+}

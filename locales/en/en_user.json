@@ -1,0 +1,47 @@
+{
+  "invalid": "No user with that ID",
+  "invalid_id_user": "Please log in or specify a user ID",
+  "invalid_id_admin": "Please specify a user ID",
+  "create": {
+    "denied": "Registration denied",
+    "duplicate": "You're already registered",
+    "duplicate_child": "You already have an account registered with this email address. Please enter your original password to continue",
+    "invalid_invite": "Invalid invite. Please contact the account holder"
+  },
+  "update": {
+    "duplicate_email": "This email address is already registered",
+    "language": "Language updated",
+    "profile": "Profile updated",
+    "support_access": "Support access updated",
+    "user": "User updated",
+    "unauthorized": "You do not have permission to perform this action. Please contact the account owner",
+    "permission_error": "You can not change your own permission level",
+    "invalid_default_account": "You do not have access to this account"
+  },
+  "password": {
+    "check_email": "Please check your email for further instructions",
+    "invalid": "Please enter the correct password",
+    "invalid_email": "Please enter the correct email address",
+    "saved": "Your new password has been saved",
+    "same": "Your new password must be different to your old password",
+    "reset_denied": "Your password reset request has been denied"
+  },
+  "verify": {
+    "check_email": "Please check your email for a new link",
+    "verified": "Your account has been verified",
+    "invalid_code": "Invalid verification code. Please try again"
+  },
+  "delete": {
+    "owner": "Please delete account owners via the account page",
+    "owner_by_admin": "Account owners cannot be deleted",
+    "master": "You cannot delete your master account",
+    "accounts": "User removed from all accounts",
+    "owner_account": "Please close your own account using the profile page",
+    "user_account": "You can not delete yourself, please contact the account owner",
+    "deleted": "User deleted",
+    "invalid_password": "Please enter the correct password"
+  },
+  "log": {
+    "created": "✅ User created: {{email}}"
+  }
+}

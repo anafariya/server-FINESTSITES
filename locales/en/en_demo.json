@@ -1,0 +1,20 @@
+{
+  "revenue": "Revenue",
+  "user": "User",
+  "churn": "churn",
+  "owner": "Owner",
+  "admin": "Admin",
+  "stats": {
+    "users": "users",
+    "active": "active",
+    "churned": "churned",
+    "latest": "this month"
+  },
+  "progress": {
+    "mrr": "$100k MRR",
+    "users": "10k users",
+    "churn": "2% churn",
+    "teams": "2,500 teams",
+    "goal": "Ship new product"
+  }
+}

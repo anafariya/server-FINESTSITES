@@ -1,0 +1,9 @@
+{
+  "create": {
+    "success": "Feedback saved"
+  },
+  "delete": {
+    "success": "Feedback item deleted",
+    "id_required": "Feedback item ID is required"
+  }
+}

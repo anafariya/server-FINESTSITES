@@ -1,0 +1,18 @@
+{
+    "registered_event": {
+        "subject": "Event Registered Status - Meetlocal",
+        "body": "Hello {{name}}, \nWe’re excited to let you know that your registration for {{event}} has been successfully confirmed. Thank you for signing up — we can’t wait to see you at the event! \nHere are the details of your registration: \nEvent Name: {{event}} \nDate & Time: {{date}} \nIf you’d like to view or manage your registration, please visit your dashboard:",
+        "button": "Visit Meetlocal"
+    },
+    "join_meetlocal": {
+        "subject": "Your Next Steps to Join Meetlocal",
+        "body": "Hello {{name}},\n\nYour friend has invited you to join Meetlocal and participate in {{event}}!\n\nYou’re just one step away from completing your account setup to access event details, manage your registration, and explore other exciting activities.\n\nHere are the event details:\nEvent Name: {{event}}\nDate & Time: {{date}}\n\nTo get started, please click the button below and complete your profile setup. Once you do, you’ll be ready to connect with fellow attendees and make the most of your experience!\n\nIf you have any questions, feel free to reply to this email — we’re here to help.",
+        "button": "Set Up Your Account"
+    },
+    "buy_hearts": {
+        "subject": "Your Meetlocal Hearts Have Been Added!",
+        "body": "Your purchase of {{quantity}} Meetlocal Hearts for {{amount}} on {{date}} has been successfully added to your account.\n\nYou can now use your Hearts to express interest, send Superlikes, and unlock special features.\n\nThank you for your purchase and for being part of the Meetlocal community!\n\nTo view your updated balance or use your Hearts, visit your dashboard:",
+        "button": "Visit Meetlocal"
+    }
+
+}

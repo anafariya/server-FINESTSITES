@@ -1,0 +1,19 @@
+{
+  "account_deactivated": "Your account has been deactivated. Please contact support",
+  "account_disabled": "Your account has been disabled due to suspicious activity. Please check your email for further instructions",
+  "account_doesnt_exist": "You're not registered",
+  "header_required": "Authorization header required",
+  "invalid_account": "You are not a memeber of this account",
+  "invalid_api_key": "Invalid API key",
+  "invalid_credentials": "Please enter the correct login details",
+  "invalid_email": "Invalid email address, please try signing in again",
+  "invalid_header_type": "Unrecognised header type",
+  "invalid_permission": "You do not have permission to perform this action",
+  "invalid_scope": "You don't have permission to use this scope",
+  "invalid_token": "Invalid token",
+  "invalid_verification_code": "Invalid verification code. Please try again",
+  "signin_blocked": "Your sign in attempt has been blocked due to suspicious activity. Please check your email for further instructions",
+  "token_expired": "Token has expired, please try signing in again",
+  "token_required": "Authorization token required",
+  "unverified_account": "Please verify your account to access this resource"
+}

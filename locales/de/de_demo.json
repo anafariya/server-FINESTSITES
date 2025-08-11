@@ -1,0 +1,20 @@
+{
+  "revenue": "Umsatz",
+  "user": "Benutzer",
+  "churn": "Abwanderung",
+  "owner": "Eigentümer",
+  "admin": "Admin",
+  "stats": {
+    "users": "Benutzer",
+    "active": "aktiv",
+    "churned": "abgewandert",
+    "latest": "diesen Monat"
+  },
+  "progress": {
+    "mrr": "100.000 $ MRR",
+    "users": "10.000 Benutzer",
+    "churn": "2 % Abwanderung",
+    "teams": "2.500 Teams",
+    "goal": "Neues Produkt ausliefern"
+  }
+}
