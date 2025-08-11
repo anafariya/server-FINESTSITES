@@ -46,4 +46,17 @@ api.delete('/api/user', auth.verify('user', 'user.delete'), use(userController.d
 
 api.delete('/api/user/:id', auth.verify('user', 'user.delete', 'unverified'), use(userController.delete));
 
+// TEAM CANCELLATION ROUTE - Added to working API file
+const registeredParticipantController = require('../controller/registerParticipantController');
+api.put('/api/admin/cancel-team/:teamId', auth.verify('owner'), use(registeredParticipantController.adminCancelTeam));
+
+// Test route to verify it's working
+api.get('/api/team-cancel-test', (req, res) => {
+  res.json({ 
+    message: 'Team cancel route is available in user.js', 
+    timestamp: new Date().toISOString(),
+    route: 'PUT /api/admin/cancel-team/:teamId'
+  });
+});
+
 module.exports = api;

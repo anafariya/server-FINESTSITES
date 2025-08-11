@@ -183,6 +183,22 @@ const emails = [
     button_url: '{{domain}}/signup/verify?token={{content.verification_token}}',
     locale: 'en',
   },
+  { 
+    name: 'event_registered',
+    subject: 'Event Registration Confirmation - {{content.event_name}}',
+    body: 'Hi {{content.name}},\n\nWe are excited to confirm that your registration for {{content.event_name}} has been successfully confirmed. Thank you for registering – we can\'t wait to see you at the event!\n\nHere are your registration details:\n\nEvent Name: {{content.event_name}}\n\nDate & Time: {{content.event_date}}\n\nIf you need to view or manage your registration, please visit your dashboard:',
+    button_label: 'View Dashboard',
+    button_url: '{{content.domain}}/dashboard',
+    locale: 'en',
+  },
+  { 
+    name: 'join_meetlocal',
+    subject: 'Welcome to MeetLocal!',
+    body: 'Hi {{content.name}},\n\nWelcome to MeetLocal! Your friend has registered you for an event and created an account for you.\n\nEvent: {{content.event_name}}\nDate: {{content.event_date}}\n\nYou can now sign in to your account and manage your event registrations.',
+    button_label: 'Sign In',
+    button_url: '{{content.domain}}/signin',
+    locale: 'en',
+  },
 ]
 
 module.exports = emails;
