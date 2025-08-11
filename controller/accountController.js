@@ -807,15 +807,7 @@ exports.plans = async function(req, res){
 
 exports.coupon = async function(req, res){
 
-  console.log('🎟️ COUPON VALIDATION: Starting coupon validation process');
-  console.log('📋 Request body:', req.body);
-  console.log('📋 Headers:', req.headers);
-  console.log('📋 User:', req.user);
-
   const data = req.body;
-
-  console.log('🔍 COUPON VALIDATION: Checking if coupon exists in request');
-  console.log('📋 Coupon from request:', data.coupon);
 
   utility.assert(data.coupon, res.__('account.plan.no_coupon'));
   

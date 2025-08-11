@@ -33,7 +33,7 @@ const UserSchema = new Schema({
   onboarded: { type: Boolean, default: false },
   first_name: { type: String },
   last_name: { type: String },
-  gender: { type: String, enum: ['male', 'female'], default: null },
+  gender: { type: String, enum: ['male', 'female', 'diverse'], default: null },
   date_of_birth: { type: Date },
   interests: [{ type: String }],
   looking_for: { type: String },
@@ -394,10 +394,6 @@ exports['2fa'].backup.verify = async function({ id, email, account, code }){
 
 exports.update = async function({ _id, id, account, data }){
 
-  console.log('🔧 USER UPDATE: Starting user update process');
-  console.log('📋 Update parameters:', { _id, id, account, hasData: !!data });
-  console.log('📋 Update data:', data);
-
   if (data?.name)
     data.name = escape(data.name);
 
@@ -428,17 +424,9 @@ exports.update = async function({ _id, id, account, data }){
 
   // update nested objects
   if (data?.onboarded || data?.permission){
-    console.log('🔧 USER UPDATE: Updating nested account objects');
 
     const doc = await User.findOne({ ..._id ? {_id } : {id: id}, 'account.id': account });
     if (!doc) throw { message: `No user with that ID` };
-    
-    console.log('🔧 USER UPDATE: Found existing user document');
-    console.log('📋 Current user data:', {
-      looking_for: doc.looking_for,
-      gender: doc.gender,
-      onboarded: doc.onboarded
-    });
     
     // Fix existing invalid data in the document before saving
     if (doc.looking_for && Array.isArray(doc.looking_for)) {
@@ -476,11 +464,9 @@ exports.update = async function({ _id, id, account, data }){
       },
       { runValidators: false, new: true }
     );
-    console.log('✅ USER UPDATE: Nested account objects updated successfully');
   
   }
   else {
-    console.log('🔧 USER UPDATE: Updating user data directly');
     
     // Use runValidators: false to avoid validation issues with existing invalid data
     const userCurrent = await User.findOneAndUpdate(
@@ -490,10 +476,8 @@ exports.update = async function({ _id, id, account, data }){
     );
     data.is_invited = userCurrent.is_invited
     data.avatar = userCurrent.avatar
-    console.log('✅ USER UPDATE: User data updated successfully');
   }
 
-  console.log('✅ USER UPDATE: Update process completed');
   return data;
 
 }
