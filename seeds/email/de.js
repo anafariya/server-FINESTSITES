@@ -183,22 +183,6 @@ const emails = [
     body: "Bitte klicke auf den untenstehenden Link, um Deine E-Mail-Adresse zu verifizieren.",
     button_label: "E-Mail verifizieren",
   },
-  {
-    name: 'event_registered',
-    button_url: '{{content.domain}}/dashboard',
-    locale: 'de',
-    subject: "Event-Registrierung bestätigt - {{content.event_name}}",
-    body: "Hallo {{content.name}},\n\nWir freuen uns, Dir mitteilen zu können, dass Deine Anmeldung für {{content.event_name}} erfolgreich bestätigt wurde. Danke, dass Du Dich angemeldet hast – wir können es kaum erwarten, Dich beim Event zu sehen!\n\nHier sind die Details Deiner Anmeldung:\n\nEventname: {{content.event_name}}\n\nDatum & Uhrzeit: {{content.event_date}}\n\nWenn Du Deine Anmeldung einsehen oder verwalten möchtest, besuche bitte Dein Dashboard:",
-    button_label: "Dashboard anzeigen",
-  },
-  {
-    name: 'join_meetlocal',
-    button_url: '{{content.domain}}/signin',
-    locale: 'de',
-    subject: "Willkommen bei MeetLocal!",
-    body: "Hallo {{content.name}},\n\nWillkommen bei MeetLocal! Dein Freund hat Dich für ein Event angemeldet und ein Konto für Dich erstellt.\n\nEvent: {{content.event_name}}\nDatum: {{content.event_date}}\n\nDu kannst Dich jetzt in Dein Konto einloggen und Deine Event-Anmeldungen verwalten.",
-    button_label: "Anmelden",
-  },
 ]
 
 module.exports = emails;

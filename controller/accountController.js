@@ -811,22 +811,16 @@ exports.coupon = async function(req, res){
 
   utility.assert(data.coupon, res.__('account.plan.no_coupon'));
   
+
   // check the coupon
   if (data.coupon){ 
-    try {
-      const promos = await stripe.promo();
 
-    const promo = promos?.find(x => {
-        return x.code === data.coupon;
-      });
+    const promos = await stripe.promo({ coupon: data.coupon });
+    const promo = promos?.find(x => x.code === data.coupon);
+    utility.assert(promo, 'Invalid coupon');
+    data.coupon = promo;
 
-      utility.assert(promo, 'Invalid coupon');
-      data.coupon = promo;
-    } catch (error) {
-
-      throw error;
-    }
   }
-    res.status(200).send({ plan: data });
+  res.status(200).send({ plan: data });
 
 }

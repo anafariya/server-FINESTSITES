@@ -15,11 +15,9 @@ const TransactionSchema = new Schema({
   event_id: { type: Schema.Types.ObjectId, ref: 'EventManagement' },
   status: {
     type: String,
-    enum: ['unpaid', 'paid', 'cancelled'],
+    enum: ['unpaid', 'paid'],
     default: 'unpaid'
   },
-  cancellation_date: { type: Date },
-  voucher_code: { type: String },
   quantity: { type: Number, default: 1 },
 }, { versionKey: false, timestamps: true });
 
@@ -70,27 +68,4 @@ exports.findOneAndUpdate = async function ({ id }, data) {
 
   return await Transaction
     .findOneAndUpdate({ _id: id }, data, { new: true });
-};
-
-/*
-* transaction.getByParticipantId()
-*/
-exports.getByParticipantId = async function ({ participant_id }) {
-  return await Transaction
-    .findOne({ participant_id })
-    .populate({
-      path: 'event_id',
-      populate: {
-        path: 'city',
-        model: 'City',
-        select: 'name'
-      }
-    });
-};
-
-/*
-* transaction.update()
-*/
-exports.update = async function ({ id, data }) {
-  return await Transaction.findByIdAndUpdate(id, data, { new: true });
 };

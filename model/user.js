@@ -73,6 +73,11 @@ exports.create = async function({ user, account }){
     '2fa_enabled': false,
     facebook_id: user.facebook_id,
     twitter_id: user.twitter_id,
+    ...user.account && { account: user.account },
+    ...user.onboarded && { onboarded: user.onboarded },
+    ...user.step && { step: user.step },
+    ...user.first_name && { account: user.first_name },
+    ...user.last_name && { account: user.last_name },
     default_account: account,
     avatar: user.avatar,
     verified: user.verified,
@@ -397,47 +402,11 @@ exports.update = async function({ _id, id, account, data }){
   if (data?.name)
     data.name = escape(data.name);
 
-  // Transform data to fix validation issues
-  if (data) {
-    // Fix looking_for: convert array to string if needed
-    if (data.looking_for) {
-      const originalLookingFor = data.looking_for;
-      data.looking_for = Array.isArray(data.looking_for) 
-        ? data.looking_for[0] 
-        : data.looking_for;
-      console.log('🔧 DATA TRANSFORM: looking_for', { 
-        original: originalLookingFor, 
-        transformed: data.looking_for 
-      });
-    }
-
-    // Fix gender: convert to lowercase if needed
-    if (data.gender) {
-      const originalGender = data.gender;
-      data.gender = data.gender.toLowerCase();
-      console.log('🔧 DATA TRANSFORM: gender', { 
-        original: originalGender, 
-        transformed: data.gender 
-      });
-    }
-  }
-
   // update nested objects
   if (data?.onboarded || data?.permission){
 
     const doc = await User.findOne({ ..._id ? {_id } : {id: id}, 'account.id': account });
     if (!doc) throw { message: `No user with that ID` };
-    
-    // Fix existing invalid data in the document before saving
-    if (doc.looking_for && Array.isArray(doc.looking_for)) {
-      console.log('🔧 DATA FIX: Converting looking_for from array to string');
-      doc.looking_for = doc.looking_for[0];
-    }
-    
-    if (doc.gender && doc.gender !== doc.gender.toLowerCase()) {
-      console.log('🔧 DATA FIX: Converting gender to lowercase');
-      doc.gender = doc.gender.toLowerCase();
-    }
     
     const index = doc.account.findIndex(x => x.id === account);
 
@@ -450,30 +419,12 @@ exports.update = async function({ _id, id, account, data }){
     doc.account[index].permission = data.permission;
 
     doc.markModified('account');
-    
-    // Use findOneAndUpdate instead of save to avoid validation issues
-    await User.findOneAndUpdate(
-      { _id: doc._id },
-      { 
-        $set: {
-          'account': doc.account,
-          'onboarded': doc.onboarded,
-          'looking_for': doc.looking_for,
-          'gender': doc.gender
-        }
-      },
-      { runValidators: false, new: true }
-    );
+    doc.save();
   
   }
   else {
     
-    // Use runValidators: false to avoid validation issues with existing invalid data
-    const userCurrent = await User.findOneAndUpdate(
-      { ..._id ? {_id: _id } : {id: id}, ...(account ? {'account.id': account} : {}) }, 
-      data,
-      { runValidators: false, new: true }
-    );
+    const userCurrent = await User.findOneAndUpdate({ ..._id ? {_id: _id } : {id: id}, ...(account ? {'account.id': account} : {}) }, data);
     data.is_invited = userCurrent.is_invited
     data.avatar = userCurrent.avatar
   }
