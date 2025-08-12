@@ -1,3 +1,11 @@
 {
-  "invalid": "Bitte überprüfe Deine erforderlichen Eingaben erneut"
+  "invalid": "Bitte überprüfe Deine erforderlichen Eingaben erneut",
+  "cancelled_with_voucher": {
+    "subject": "Event storniert - Gutschein ausgestellt",
+    "body": "Deine Anmeldung für das {{event_name}} am {{event_date}} wurde erfolgreich storniert. Da Du mehr als 24 Stunden vor dem Event storniert hast, haben wir einen Gutschein für Dich generiert, den Du bei zukünftigen Events verwenden kannst."
+  },
+  "cancelled_no_voucher": {
+    "subject": "Event storniert - Keine Rückerstattung möglich",
+    "body": "Deine Anmeldung für das {{event_name}} am {{event_date}} wurde storniert. Leider kann, da Du innerhalb von 24 Stunden vor Beginn des Events storniert hast, keine Rückerstattung oder Gutschein ausgestellt werden."
+  }
 }

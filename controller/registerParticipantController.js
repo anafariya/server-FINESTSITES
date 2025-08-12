@@ -14,11 +14,16 @@ const joi = require('joi');
 const account = require('../model/account');
 const mail = require('../helper/mail');
 const token = require('../model/token');
+const moment = require('moment-timezone');
+const log = require('../model/log');
 
 const RegisteredParticipant = mongoose.model("RegisteredParticipant");
 
 const checkEventFull = async (eventId) => {
   const eventData = await event.getById({ id: eventId });
+  if (eventData?.is_canceled) {
+    throw { message: 'This event has been canceled. Registration is not allowed.' };
+  }
   const registeredCount = await RegisteredParticipant.countDocuments({
     event_id: eventId,
     status: "registered",
@@ -98,9 +103,6 @@ exports.create = async function (req, res) {
         friend.name = `${friend.first_name} ${friend.last_name}`
         friend.children = friend.children === 'Yes' ? true : false;
         friendAdded = await user.create({ user: friend })
-        console.log(friendAdded, 'friendAdded');
-        
-        console.log('====get id users', idUser);
       } else {
         friendAdded = friendData;
       }
@@ -123,7 +125,6 @@ exports.create = async function (req, res) {
         looking_for: friend.looking_for,
         status: 'process'
       })
-      console.log(registerFriend, 'registerFriend');
       
     }
     const registerMainUser = await registeredParticipant.create({
@@ -157,7 +158,6 @@ exports.create = async function (req, res) {
       }
     })
 
-    console.log(registerMainUser, 'registerMainUser');
     const payment = await transaction.create({
       user_id: userData._id,
       participant_id: registerMainUser._id,
@@ -174,8 +174,6 @@ exports.create = async function (req, res) {
       id: payment._id
     } });
   } catch (err) {
-    console.log(err, 'err');
-    
     return res.status(500).send({ error: err.message });
   }
 };
@@ -196,6 +194,7 @@ exports.pay = async function (req, res) {
       sepaForm: joi.boolean(),
       credit_card_name: joi.string(),
       account: joi.boolean(),
+      coupon: joi.string().allow(null, ''),
   
     }), req, res); 
   
@@ -207,7 +206,34 @@ exports.pay = async function (req, res) {
     const transactionUser = await transaction.getById({id: new mongoose.Types.ObjectId(id)})
     utility.assert(transactionUser, res.__('event.already_paid'));
 
-    if(transactionUser && !data.account){
+    
+    
+    // Check if coupon covers full amount for free registration
+    let totalAfterCoupon = transactionUser.amount;
+    let couponData = null;
+    
+    if (data.coupon) {
+      try {
+        couponData = await stripe.coupon(data.coupon);
+        
+        if (couponData && couponData.valid) {
+          const originalAmountCents = transactionUser.amount * 100;
+          const discountCents = couponData.amount_off;
+          const finalAmountCents = Math.max(0, originalAmountCents - discountCents);
+          totalAfterCoupon = finalAmountCents / 100;
+        } else {
+        }
+      } catch (couponError) {
+      }
+    } else {
+    }
+
+    // If account=true OR coupon covers full amount, skip payment processing
+    const skipPayment = data.account || (totalAfterCoupon <= 0 && couponData);
+    
+    
+
+    if(transactionUser && !skipPayment){
       const eventData = await event.getById({id: new mongoose.Types.ObjectId(transactionUser.event_id)})
       await checkCapacityWithWarning(transactionUser.event_id);
 
@@ -223,10 +249,15 @@ exports.pay = async function (req, res) {
       if (eventDate < today) {
         utility.assert(eventData, res.__('event.already_held'));
       }
+
+      // Block payment if event has been canceled by admin
+      if (eventData.is_canceled) {
+        return res.status(400).send({ error: res.__('event.canceled_by_admin', 'This event has been canceled. Payment is not allowed.') });
+      }
     }
 
 
-    if (data.stripe === undefined){
+    if (data.stripe === undefined && !skipPayment){
 
       utility.assert(data.token?.id, res.__('account.card.missing'));
 
@@ -266,7 +297,35 @@ exports.pay = async function (req, res) {
       });
     }
 
-    console.log(res.__('account.log.event'));
+    // Handle free registration with voucher
+    if (skipPayment && couponData && totalAfterCoupon <= 0) {
+      
+      // Complete the registration directly without payment
+      try {
+        await exports.successPayment({ 
+          body: { transaction: id },
+          user: req.user,
+          account: req.account,
+          locale: req.locale
+        }, {
+          __: res.__,
+          status: (code) => ({ send: (data) => { 
+            return res.status(200).send({ 
+              free_registration: true, 
+              message: 'Registration completed with voucher',
+              voucher_used: data.coupon,
+              amount_saved: couponData.amount_off / 100
+            });
+          }})
+        });
+        return;
+      } catch (error) {
+        return res.status(500).send({ error: 'Failed to complete free registration' });
+      }
+    } else if (skipPayment) {
+      
+    }
+
     log.create({ message: res.__('account.log.event'), body: {  }, req: req });
     res.status(200).send({ event: data, onboarded: false });
 };
@@ -324,13 +383,13 @@ exports.sepa.attach = async function(req, res){
   if(!accountData.stripe_customer_id){
     utility.assert(req.body.token, res.__('account.sepa.missing'), 'token');
   }
-  console.log(accountData);
+  
   
   const sepaPayment = await stripe.customer.sepaSettings(req.body.paymentId, accountData.stripe_customer_id, req.body.prefer_payment_method);
 
   let paymentIntent;
   const transactionUser = await transaction.getById({id: new mongoose.Types.ObjectId(req.body.transaction)})
-  console.log(transactionUser);
+  
 
   if(transactionUser){
     paymentIntent = await stripe.paymentIntent({
@@ -650,7 +709,7 @@ exports.successPayment = async function (req, res) {
           active: true
         }).select('id').lean();
 
-        console.log(`📧 Found ${adminAccounts.length} admin accounts:`, adminAccounts.map(acc => acc.id));
+        
 
         // Get all admin users (users whose default_account matches admin account IDs)
         const adminUserIds = adminAccounts.map(account => account.id);
@@ -658,11 +717,10 @@ exports.successPayment = async function (req, res) {
           default_account: { $in: adminUserIds }
         }).select('email name').lean();
 
-        console.log(`👥 Found ${adminUsers.length} admin users:`, adminUsers.map(user => ({ email: user.email, name: user.name })));
+        
 
         // Send email to all admin users
         for (const adminUser of adminUsers) {
-          console.log(`📤 Sending email to: ${adminUser.email} (${adminUser.name || 'Admin'})`);
           
           const emailData = {
             to: adminUser.email,
@@ -715,20 +773,18 @@ exports.successPayment = async function (req, res) {
           };
 
           await mail.send(emailData);
-          console.log(`✅ Email sent successfully to: ${adminUser.email}`);
         }
 
         await mongoose
           .model("EventManagement")
           .findByIdAndUpdate(transactionUser.event_id, { capacity_warning_sent: true });
       } catch (emailError) {
-        console.error("❌ EMAIL SEND FAILED:", emailError);
+        
       }
     } else {
       if (currentRegistrations >= totalCapacity * 0.9) {
-        console.log("ℹ️ 90% reached but warning already sent");
+        
       } else {
-        console.log("ℹ️ Not yet at 90% capacity");
       }
     }
   }
@@ -737,4 +793,139 @@ exports.successPayment = async function (req, res) {
     data: {},
     message: res.__("account.sepa.updated"),
   });
+};
+
+/*
+ * registerParticipant.cancelRegistration()
+ * Cancel user event registration with voucher/refund logic
+ */
+exports.cancelRegistration = async function (req, res) {
+  try {
+    const userId = req.user;
+    const eventId = req.body.eventId;
+
+    utility.assert(eventId, res.__('register_participant.event_id_required'));
+
+    const userData = await user.get({ id: userId });
+    utility.assert(userData, res.__('user.not_found'));
+
+    // Find the user's registration for this event
+    const registration = await RegisteredParticipant.findOne({
+      user_id: userData._id,
+      event_id: new mongoose.Types.ObjectId(eventId),
+      status: 'registered',
+      is_cancelled: { $in: [false, null] }
+    }).populate({
+      path: 'event_id',
+      populate: {
+        path: 'city',
+        select: 'name'
+      }
+    });
+
+    utility.assert(registration, res.__('register_participant.registration_not_found'));
+
+    const eventData = registration.event_id;
+    utility.assert(eventData, res.__('event.not_found'));
+
+    // Calculate hours until event start (using Berlin timezone)
+    // Parse the event date and start time properly
+    const eventDateForTime = moment(eventData.date).format('YYYY-MM-DD');
+    const startTime = eventData.start_time || '19:00'; // Default to 7 PM if no start time
+    const eventDateTime = moment.tz(`${eventDateForTime} ${startTime}`, 'YYYY-MM-DD HH:mm', 'Europe/Berlin');
+    const nowBerlin = moment.tz('Europe/Berlin');
+    const hoursUntilEvent = eventDateTime.diff(nowBerlin, 'hours', true);
+
+    // Mark registration as cancelled
+    await RegisteredParticipant.findByIdAndUpdate(registration._id, {
+      status: 'canceled',
+      is_cancelled: true,
+      cancel_date: new Date()
+    });
+
+    let voucherData = null;
+
+    if (hoursUntilEvent > 24) {
+      // Create voucher using Stripe
+      try {
+        // Get event price from transaction or use default
+        const Transaction = mongoose.model('Transaction');
+        const transactionData = await Transaction.findOne({
+          event_id: eventId,
+          user_id: userData._id,
+          status: 'paid'
+        });
+        
+        const eventPrice = transactionData?.amount || 25; // Use transaction amount or default
+        
+        const eventName = eventData.city?.name ? 
+          `${eventData.city.name} Event - ${moment(eventData.date).format('DD.MM.YYYY')}` :
+          `Bar-Hopping Event - ${moment(eventData.date).format('DD.MM.YYYY')}`;
+
+        voucherData = await stripe.createCoupon({
+          userId: userData._id.toString(),
+          eventName: eventName,
+          amount: eventPrice
+        });
+
+      } catch (stripeError) {
+        // Continue with cancellation even if voucher creation fails
+      }
+    } 
+    // Send confirmation email
+    const emailTemplate = voucherData ? 'event_cancelled_with_voucher' : 'event_cancelled_no_voucher';
+    const eventName = eventData.city?.name || 'Bar-Hopping';
+    const eventDate = moment(eventData.date).format('DD.MM.YYYY');
+    
+    const emailContent = {
+      name: userData.first_name || userData.name,
+      body: voucherData ? 
+        res.__('register_participant.cancelled_with_voucher.body', 'Your registration for the {{event_name}} on {{event_date}} has been successfully cancelled. Since you cancelled more than 24 hours before the event, we\'ve generated a voucher for you to use on future events.', {
+          event_name: `${eventName} Event`,
+          event_date: eventDate
+        }) :
+        res.__('register_participant.cancelled_no_voucher.body', 'Your registration for the {{event_name}} on {{event_date}} has been cancelled. Unfortunately, since you cancelled within 24 hours of the event start time, no refund or voucher can be issued.', {
+          event_name: `${eventName} Event`,
+          event_date: eventDate
+        }),
+      event_name: `${eventName} Event`,
+      event_date: eventDate,
+      domain: process.env.CLIENT_URL || 'http://localhost:3000',
+      ...(voucherData && {
+        voucher_code: voucherData.id,
+        voucher_amount: `€${voucherData.amount_off / 100}`,
+        voucher_expiry: moment.unix(voucherData.redeem_by).format('DD.MM.YYYY')
+      })
+    };
+
+    await mail.send({
+      to: userData.email,
+      locale: userData.locale || 'en',
+      custom: true,
+      template: emailTemplate,
+      subject: voucherData ? 
+        res.__('register_participant.cancelled_with_voucher.subject', 'Event Cancelled - Voucher Issued') : 
+        res.__('register_participant.cancelled_no_voucher.subject', 'Event Cancelled - No Refund Available'),
+      content: emailContent
+    });
+
+    const responseMessage = voucherData ? 
+      res.__('register_participant.cancelled_with_voucher') : 
+      res.__('register_participant.cancelled_no_voucher');
+
+    return res.status(200).send({
+      message: responseMessage,
+      data: {
+        cancelled: true,
+        voucher_issued: !!voucherData,
+        voucher_code: voucherData?.id,
+        hours_until_event: hoursUntilEvent
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).send({
+      message: error.message || res.__('register_participant.cancellation_failed')
+    });
+  }
 };

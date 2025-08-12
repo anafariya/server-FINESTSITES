@@ -1,3 +1,11 @@
 {
-    "invalid": "Please check your required inputs again"
+    "invalid": "Please check your required inputs again",
+    "cancelled_with_voucher": {
+        "subject": "Event Cancelled - Voucher Issued",
+        "body": "Your registration for the {{event_name}} on {{event_date}} has been successfully cancelled. Since you cancelled more than 24 hours before the event, we've generated a voucher for you to use on future events."
+    },
+    "cancelled_no_voucher": {
+        "subject": "Event Cancelled - No Refund Available",
+        "body": "Your registration for the {{event_name}} on {{event_date}} has been cancelled. Unfortunately, since you cancelled within 24 hours of the event start time, no refund or voucher can be issued."
+    }
 }

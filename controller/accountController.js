@@ -69,8 +69,6 @@ exports.create = async function(req, res){
 
   }
 
-  console.log(res.__('account.log.creating', { email: data.email }));
-
   // create the account
   const accountData = await account.create(data.plan);
   data.account_id = accountData.id; // pass to auth controller to select new account
@@ -81,8 +79,6 @@ exports.create = async function(req, res){
   await user.account.add({ id: userData.id, account: accountData.id, permission: 'owner' });
   notification.create({ user: userData.id, account: accountData.id, permission: 'owner' });
   
-  console.log(res.__('account.log.created', { email: data.email}));
-
   const verificationToken = auth.token({ 
     
     data: { 
@@ -155,8 +151,6 @@ exports.plan = async function(req, res){
       // check for an incomplete payment that requires 2-factor authentication
       if (stripeData.subscription?.latest_invoice?.payment_intent?.status === 'requires_action'){
 
-        console.log(res.__('account.plan.requires_action'));
-
         return res.status(200).send({
 
           requires_payment_action: true,
@@ -214,7 +208,6 @@ exports.plan = async function(req, res){
   if (plan.type === 'tiered')
     usage.open({ account: accountData.id })
 
-  console.log(res.__('account.log.plan'));
   log.create({ message: res.__('account.log.plan'), body: { plan: plan }, req: req });
   res.status(200).send({ plan: data.plan, subscription: 'active', onboarded: false });
 
@@ -501,8 +494,6 @@ exports.upgrade = async function(req, res){
     // check for an incomplete payment that requires 2-factor authentication
     if (stripeData.subscription?.latest_invoice?.payment_intent?.status === 'requires_action'){
 
-      console.log(res.__('account.plan.requires_action'));
-
       res.status(200).send({
 
         requires_payment_action: true,
@@ -775,7 +766,6 @@ exports.close = async function(req, res){
 
   });
 
-  console.log(res.__('account.log.deleted', { email: accountData.owner_email}));
   log.create({ message: res.__('account.log.deleted', { email: accountData.owner_email}), req: req });
   return res.status(200).send({ message: res.__('account.delete.success') });
 
@@ -815,12 +805,33 @@ exports.coupon = async function(req, res){
   // check the coupon
   if (data.coupon){ 
 
-    const promos = await stripe.promo({ coupon: data.coupon });
-    const promo = promos?.find(x => x.code === data.coupon);
-    utility.assert(promo, 'Invalid coupon');
-    data.coupon = promo;
+    try {
+      // First try to retrieve as a direct coupon (for our event vouchers)
+      const coupon = await stripe.coupon(data.coupon);
+      
+      if (coupon && coupon.valid) {
+        data.coupon = coupon;
+      } else {
+        // Fallback to checking promotion codes
+        const promos = await stripe.promo({ coupon: data.coupon });
+        const promo = promos?.find(x => x.code === data.coupon);
+        utility.assert(promo, 'Invalid coupon');
+        data.coupon = promo;
+      }
+    } catch (couponError) {
+      // If direct coupon lookup fails, try promotion codes
+      try {
+        const promos = await stripe.promo({ coupon: data.coupon });
+        const promo = promos?.find(x => x.code === data.coupon);
+        utility.assert(promo, 'Invalid coupon');
+        data.coupon = promo;
+      } catch (promoError) {
+        utility.assert(false, 'Invalid coupon');
+      }
+    }
 
   }
+  
   res.status(200).send({ plan: data });
 
 }

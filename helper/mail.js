@@ -22,7 +22,6 @@ exports.send = async function(data){
 
 	data.locale && i18n.setLocale(data.locale);
 
-	console.log(data, 'data');
 	
 
 	// validate email address
@@ -43,7 +42,6 @@ exports.send = async function(data){
 
 		// get content from db
 		const content = data.custom ? data.content : await email.get({ name: data.template, locale: data.locale });
-		console.log(content, data.custom, 'check template');
 		utility.assert(content, i18n.__('helper.mail.invalid_template'));
 
 		const html = await createEmail({ template: data.html_template || 'template', content: content || data.content, values: data.content }); // create html template
@@ -57,13 +55,11 @@ exports.send = async function(data){
 			html: html
 
 		});
-		console.log(datas, 'sent');
 		
 	} catch (error) {
 		console.log(error); //logs any error
 	  }
 		
-		console.log(i18n.__('helper.mail.sent', { email: data.to }));
 
 	}
 	else {
@@ -124,6 +120,16 @@ async function createEmail({ template, content, values }){
 			for (key in values){
 				
 				const rex = new RegExp(`{{content.${key}}}`, 'g');
+				email = email.replace(rex, values[key]);
+				
+			}
+		}
+
+		// Also replace direct {{key}} patterns for backward compatibility
+		if (values){
+			for (key in values){
+				
+				const rex = new RegExp(`{{${key}}}`, 'g');
 				email = email.replace(rex, values[key]);
 				
 			}

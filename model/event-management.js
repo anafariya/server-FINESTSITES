@@ -220,7 +220,7 @@ exports.getMatchingEvents = async function (userId) {
                   { $eq: ['$event_id', '$$eid'] },
                   { $eq: ['$user_id', uid] },
                   { $eq: ['$status', 'registered'] },
-                  { $or: [{ $eq: ['$is_cancelled', false] }, { $not: ['$is_cancelled'] }] }
+                  { $in: ['$is_cancelled', [false, null]] }
                 ]
               }
             }
@@ -332,7 +332,8 @@ exports.getMatchingEvents = async function (userId) {
             contact_details: '$bar_info.contact_details'
           }
         },
-        group: { $first: '$group' }
+        group: { $first: '$group' },
+        is_registered: { $first: '$is_registered' }
       },
     },
 
@@ -341,7 +342,6 @@ exports.getMatchingEvents = async function (userId) {
     {
       $project: {
         user_registered: 0,
-        is_registered: 0,
         validUntil: 0
       }
     }

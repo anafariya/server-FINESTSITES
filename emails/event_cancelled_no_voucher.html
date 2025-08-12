@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+  <title>{{title}}</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i,700,700i'); 
+    
+    body {
+      font-family: 'Source Sans Pro', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      color: white;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    
+    .content {
+      padding: 40px 30px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #6c757d;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Event Registration Cancelled</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hello {{name}},</p>
+      
+      <p>{{content.body}}</p>
+      
+      <div class="warning-box">
+        <div style="font-size: 20px; margin-bottom: 10px;">⚠️ Late Cancellation</div>
+        <p><strong>Unfortunately, since you cancelled within 24 hours of the event start time, no refund or voucher can be issued.</strong></p>
+        <p>This policy helps us manage event logistics and ensures fairness for all participants.</p>
+      </div>
+      
+      <p>We understand that unexpected situations arise, and we appreciate your understanding regarding our cancellation policy.</p>
+      
+      <p><strong>Our Cancellation Policy:</strong></p>
+      <ul>
+        <li>Cancellations more than 24 hours before the event: Full voucher issued</li>
+        <li>Cancellations within 24 hours of the event: No refund or voucher</li>
+      </ul>
+      
+      <p>We hope you'll consider joining us for future events!</p>
+      
+      <a href="{{domain}}/matching-room" class="btn">Browse Upcoming Events</a>
+    </div>
+    
+    <div class="footer">
+      <p>If you have any questions, please contact us at support@finestsites.io</p>
+      <p>&copy; 2024 FinestSites. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+
+</html>

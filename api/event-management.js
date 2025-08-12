@@ -24,4 +24,6 @@ api.post('/api/sepa-attach', auth.verify('user'), use(registeredParticipantContr
 
 api.post('/api/event/success', auth.verify('user'), use(registeredParticipantController.successPayment));
 
+api.post('/api/events/cancel-registration', auth.verify('user'), use(registeredParticipantController.cancelRegistration));
+
 module.exports = api;

@@ -1,6 +1,7 @@
 const config = require('config');
 const settings = config.get('stripe');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_API_KEY);
+const randomstring = require('randomstring');
 
 /*
 * stripe.subscription()
@@ -220,7 +221,6 @@ exports.customer = async function(id){
 */
 
 exports.customer.create = async function({ email, name, token, address }){
-  console.log(email, name, token, address, 'email, name, token, address');
   
   return await stripe.customers.create({
 
@@ -356,7 +356,18 @@ exports.webhook.verify = function(body, sig){
 
 /*
 * stripe.coupon()
-* list the stripe coupons
+* retrieve a single coupon
+*/
+
+exports.coupon = async function(couponId){
+
+  return await stripe.coupons.retrieve(couponId);
+
+}
+
+/*
+* stripe.promo()
+* list the stripe promotion codes
 */
 
 exports.promo = async function(){
@@ -544,4 +555,43 @@ exports.customer.paymentMethod.update = async function(customerId, paymentId, da
     })
   }
   return data
+}
+
+/*
+* stripe.createCoupon()
+* create a coupon for event cancellation voucher
+*/
+
+exports.createCoupon = async function({ userId, eventName, amount }){
+
+  const couponId = `EVENT-${randomstring.generate({ length: 8, charset: 'alphanumeric' }).toUpperCase()}`;
+  
+  // Create coupon valid for 24 months
+  const expirationTimestamp = Math.floor(Date.now() / 1000) + (24 * 30 * 24 * 60 * 60); // 24 months from now
+
+  const coupon = await stripe.coupons.create({
+    id: couponId,
+    amount_off: Math.round(amount * 100), // Convert to cents
+    currency: 'eur',
+    duration: 'once',
+    max_redemptions: 1,
+    redeem_by: expirationTimestamp,
+    metadata: {
+      user_id: userId ? String(userId) : '',
+      event_name: eventName ? String(eventName) : '',
+      created_for: 'event_cancellation'
+    },
+    name: `Event Voucher - ${eventName}`.substring(0, 40)
+  });
+
+  return coupon;
+}
+
+/*
+* stripe.deleteCoupon()
+* delete a coupon
+*/
+
+exports.deleteCoupon = async function(couponId){
+  return await stripe.coupons.del(couponId);
 }
