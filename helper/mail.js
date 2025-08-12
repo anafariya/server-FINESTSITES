@@ -22,20 +22,13 @@ exports.send = async function(data){
 
 	data.locale && i18n.setLocale(data.locale);
 
-
+	console.log(data, 'data');
+	
 
 	// validate email address
 	const rex = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|'(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/
 
 	if (rex.test(data.to.toLowerCase())){
-
-		if (!process.env.MAILGUN_API_KEY) {
-			throw new Error('Mailgun API key not configured');
-		}
-
-		if (!settings.domain) {
-			throw new Error('Mailgun domain not configured');
-		}
 
 		const transport = nodemailer.createTransport(mailgun({
 			host: settings.host,
@@ -45,45 +38,36 @@ exports.send = async function(data){
 			}
 		}))
 
+		// console.log(transport, process.env.MAILGUN_API_KEY, settings, 'trans');
+		
 
 		// get content from db
-		let content = data.custom ? data.content : await email.get({ name: data.template, locale: data.locale });
-const fs = require('fs').promises;
-			try {
-				await fs.access(`emails/${data.template}.html`);
-				// Set up basic content structure for file-based templates
-				content = {
-					subject: data.subject || `Event Registration Confirmation`,
-					body: data.body || 'Your registration has been confirmed.',
-					button_label: data.button_label || 'View Details',
-					button_url: data.button_url || domain
-				};
-			} catch (err) {
-				console.log('📧 FILE TEMPLATE ALSO NOT FOUND');
-				utility.assert(false, i18n.__('helper.mail.invalid_template'));
-			}
-		
+		const content = data.custom ? data.content : await email.get({ name: data.template, locale: data.locale });
+		console.log(content, data.custom, 'check template');
+		utility.assert(content, i18n.__('helper.mail.invalid_template'));
 
-		const html = await createEmail({ template: data.html_template || data.template || 'template', content: content || data.content, values: data.content }); // create html template
+		const html = await createEmail({ template: data.html_template || 'template', content: content || data.content, values: data.content }); // create html template
 
 		try {
-			const datas = await transport.sendMail({
+		const datas = await transport.sendMail({
 
-				from: settings.sender,
-				to: [data.to],
-				subject: content?.subject || data?.subject,
-				html: html
+			from: settings.sender,
+			to: [data.to],
+			subject: content?.subject || data?.subject,
+			html: html
 
-			});
-			
-		} catch (error) {
-
-			throw error; // Re-throw the error so it can be caught by the calling function
-		}
+		});
+		console.log(datas, 'sent');
 		
+	} catch (error) {
+		console.log(error); //logs any error
+	  }
+		
+		console.log(i18n.__('helper.mail.sent', { email: data.to }));
 
 	}
 	else {
+
 		throw ({ message: i18n.__('helper.mail.invalid_email') });
 
 	}

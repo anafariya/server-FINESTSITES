@@ -78,24 +78,6 @@ app.use(express.urlencoded({ extended: true }));
 // mongo sanitise 
 app.use(mongoSanitize());
 
-// DIRECT EVENT CANCEL ROUTE - CANCEL ENTIRE EVENT FOR ALL USERS
-const auth = require('./model/auth');
-const registeredParticipantController = require('./controller/registerParticipantController');
-const use = require('./helper/utility').use;
-
-app.put('/api/admin/cancel-event/:eventId', auth.verify('owner'), use(registeredParticipantController.adminCancelEvent));
-
-// DIRECT TEAM CANCEL ROUTE - CANCEL TEAM FOR ALL TEAM MEMBERS
-app.put('/api/admin/cancel-team/:teamId', auth.verify('owner'), use(registeredParticipantController.adminCancelTeam));
-
-// DIRECT GROUP CANCEL ROUTE - CANCEL GROUP FOR ALL GROUP MEMBERS
-app.put('/api/admin/cancel-group/:groupId', auth.verify('owner'), use(registeredParticipantController.adminCancelGroup));
-
-// Test route
-app.get('/api/direct-test', (req, res) => {
-  res.json({ message: 'Direct route works! Event cancel should work now.', timestamp: new Date() });
-});
-
 // api with rate limiter
 app.use('/api/', limiter(throttle.api));
 app.use(api);
