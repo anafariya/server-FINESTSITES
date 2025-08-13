@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+  <title>{{title}}</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i,700,700i'); 
+    
+    body {
+      font-family: 'Source Sans Pro', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      color: white;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    
+    .content {
+      padding: 40px 30px;
+    }
+    
+    .voucher-box {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      padding: 25px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 30px 0;
+      color: white;
+    }
+    
+    .voucher-code {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      display: inline-block;
+    }
+    
+    .voucher-details {
+      font-size: 14px;
+      margin-top: 15px;
+      opacity: 0.9;
+    }
+    
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #6c757d;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Event-Anmeldung storniert</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hallo {{name}},</p>
+      
+      <p>{{content.body}}</p>
+      
+      <div class="voucher-box">
+        <div style="font-size: 18px; margin-bottom: 10px;">🎫 Ihr Gutscheincode</div>
+        <div class="voucher-code">{{content.voucher_code}}</div>
+        <div class="voucher-details">
+          <div>Gültig für: <strong>{{content.voucher_amount}}</strong></div>
+          <div>Gültig bis: <strong>{{content.voucher_expiry}}</strong></div>
+          <div>Einmalige Verwendung</div>
+        </div>
+      </div>
+      
+      <p><strong>So lösen Sie Ihren Gutschein ein:</strong></p>
+      <ul>
+        <li>Geben Sie diesen Code während der Zahlung bei der Anmeldung zu einem künftigen Event ein</li>
+        <li>Der Gutscheinbetrag wird automatisch vom Gesamtbetrag abgezogen</li>
+        <li>Gültig für 24 Monate ab heute</li>
+        <li>Kann nur einmal verwendet werden</li>
+      </ul>
+      
+      <p>Wir freuen uns, Sie bei einem zukünftigen Event zu sehen!</p>
+      
+      <a href="{{domain}}/matching-room" class="btn">Bevorstehende Events ansehen</a>
+    </div>
+    
+    <div class="footer">
+      <p>Bei Fragen kontaktieren Sie uns unter support@finestsites.io</p>
+      <p>&copy; 2024 FinestSites. Alle Rechte vorbehalten.</p>
+    </div>
+  </div>
+</body>
+
+</html>
+

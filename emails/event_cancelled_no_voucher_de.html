@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+  <title>{{title}}</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i,700,700i'); 
+    
+    body {
+      font-family: 'Source Sans Pro', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      color: white;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    
+    .content {
+      padding: 40px 30px;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 30px 0;
+      text-align: center;
+    }
+    
+    .footer {
+      background: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #6c757d;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 20px 0;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Event-Anmeldung storniert</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hallo {{name}},</p>
+      
+      <p>{{content.body}}</p>
+      
+      <div class="warning-box">
+        <div style="font-size: 20px; margin-bottom: 10px;">⚠️ Späte Stornierung</div>
+        <p><strong>Leider kann bei einer Stornierung innerhalb von 24 Stunden vor Veranstaltungsbeginn keine Rückerstattung oder kein Gutschein ausgestellt werden.</strong></p>
+        <p>Diese Regel hilft uns, die Event-Planung zu gewährleisten und Fairness für alle Teilnehmenden sicherzustellen.</p>
+      </div>
+      
+      <p>Wir verstehen, dass unerwartete Situationen auftreten können, und danken Ihnen für Ihr Verständnis unserer Stornierungsbedingungen.</p>
+      
+      <p><strong>Unsere Stornierungsbedingungen:</strong></p>
+      <ul>
+        <li>Stornierungen mehr als 24 Stunden vor dem Event: Voller Gutschein wird ausgestellt</li>
+        <li>Stornierungen innerhalb von 24 Stunden vor dem Event: Keine Rückerstattung oder Gutschein</li>
+      </ul>
+      
+      <p>Wir würden uns freuen, Sie bei zukünftigen Events begrüßen zu dürfen!</p>
+      
+      <a href="{{domain}}/matching-room" class="btn">Bevorstehende Events ansehen</a>
+    </div>
+    
+    <div class="footer">
+      <p>Bei Fragen kontaktieren Sie uns unter support@finestsites.io</p>
+      <p>&copy; 2024 FinestSites. Alle Rechte vorbehalten.</p>
+    </div>
+  </div>
+</body>
+
+</html>
+

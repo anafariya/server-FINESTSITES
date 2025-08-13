@@ -87,7 +87,7 @@ async function createEmail({ template, content, values }){
 	if (content){
 
 		// split content into lines
-		content.body = content.body.split('\n');
+			content.body = content.body.split('\n');
 
 		// set default title and preheader if not specified
 		content.title = content.title || content.subject;
@@ -97,8 +97,16 @@ async function createEmail({ template, content, values }){
 		if (content.button_url?.includes('{{domain}}'))
 			content.button_url = content.button_url.replace(/{{domain}}/g, values?.domain || domain)
 
-		if (values?.name && content.name !== 'contact')
-			content.body.unshift(`Hi ${escape(values.name)},`)
+			if (values?.name && content.name !== 'contact')
+				content.body.unshift(`Hi ${escape(values.name)},`)
+
+			// Ensure voucher details are visible in the generic template
+			if (values?.voucher_code) {
+				content.body.push('');
+				content.body.push(`Gutscheincode: ${values.voucher_code}`);
+				if (values?.voucher_amount) content.body.push(`Wert: ${values.voucher_amount}`);
+				if (values?.voucher_expiry) content.body.push(`Gültig bis: ${values.voucher_expiry}`);
+			}
 		
 		content.body.forEach((line, i) => {
 

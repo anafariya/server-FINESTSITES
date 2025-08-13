@@ -873,7 +873,10 @@ exports.cancelRegistration = async function (req, res) {
       }
     } 
     // Send confirmation email
-    const emailTemplate = voucherData ? 'event_cancelled_with_voucher' : 'event_cancelled_no_voucher';
+    const emailTemplateBase = voucherData ? 'event_cancelled_with_voucher' : 'event_cancelled_no_voucher';
+    const emailTemplate = (userData.locale || 'en').toString().toLowerCase().startsWith('de') 
+      ? `${emailTemplateBase}_de` 
+      : emailTemplateBase;
     const eventName = eventData.city?.name || 'Bar-Hopping';
     const eventDate = moment(eventData.date).format('DD.MM.YYYY');
     
