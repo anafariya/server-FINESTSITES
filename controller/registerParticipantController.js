@@ -904,8 +904,7 @@ exports.cancelRegistration = async function (req, res) {
     await mail.send({
       to: userData.email,
       locale: userData.locale || 'en',
-      custom: true,
-      template: emailTemplate,
+      html_template: emailTemplate,
       subject: voucherData ? 
         res.__('register_participant.cancelled_with_voucher.subject', 'Event Cancelled - Voucher Issued') : 
         res.__('register_participant.cancelled_no_voucher.subject', 'Event Cancelled - No Refund Available'),
